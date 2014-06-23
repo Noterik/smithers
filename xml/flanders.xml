@@ -1,0 +1,17 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>signals flanders to analyse file</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>filter</type>
+				<uri>/user/.*/rawvideo/.*</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.FlandersAction" />
+	</actionset>	
+</fsxml>

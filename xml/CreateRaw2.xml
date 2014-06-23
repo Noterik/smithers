@@ -1,0 +1,21 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for creating the second raw video properties</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<!-- 
+				  user part is needed, otherwise putting the rawvideo in the queue will 
+				  also trigger the same action, causing an endless recursive loop ;) 
+				-->
+				<uri>/user/.*/rawvideo/1</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.CreateRaw2Action" />
+	</actionset>	
+</fsxml>

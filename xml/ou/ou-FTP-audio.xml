@@ -1,0 +1,17 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the OU audio ftp functionality</info>
+	</properties>	
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/rawaudio</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.ou.OUAudioFtpAction" />
+	</actionset>
+</fsxml>

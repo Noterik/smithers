@@ -1,0 +1,22 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger that listens to the ingest property of raw audio in order to ingest files
+		</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<!-- 
+				  user part is needed, otherwise putting the rawvideo in the queue will 
+				  also trigger the same action, causing an endless recursive loop ;) 
+				-->
+				<uri>/user/.*/rawaudio/*</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.common.ingest.IngestAudioAction" />
+	</actionset>
+</fsxml>

@@ -1,0 +1,19 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>Performs the </info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>filter</type>
+				<uri>ingest</uri>
+				<method>PUT</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.kiff.ExtractScreenshotsAction" />
+		<action id="2" referid="java://com.noterik.bart.fs.action.ingest.IngestAction" />
+		<action id="3" referid="java://com.noterik.bart.fs.action.flanders.ExtractMetaDataAction" />
+	</actionset>
+</fsxml>

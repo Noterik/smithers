@@ -1,0 +1,28 @@
+<fsxml>
+	<script id="testscript">
+		<properties>
+			<info>test script</info>
+		</properties>
+	
+		<input id="1">
+			<properties/>
+		</input>
+		
+		<output id="1">
+			<properties />
+		</output>
+		
+		<actionset id="all">
+			<properties/>
+			<condition id="1">
+				<properties>
+					<uri>.*</uri>
+					<method>GET|PUT|POST|DELETE</method>
+					<mimetype>.*</mimetype>
+				</properties>
+			</condition>
+			<action id="1" referid="java://com.noterik.bart.fs.action.test.Echo" />
+		</actionset>
+		
+	</script>
+</fsxml>

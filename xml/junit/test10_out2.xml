@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<fsxml>
+	<properties>
+		<depth>10</depth>
+		<start>0</start>
+		<limit>-1</limit>
+		<totalResultsAvailable>0</totalResultsAvailable>
+		<totalResultsReturned>0</totalResultsReturned>
+	</properties>
+</fsxml>

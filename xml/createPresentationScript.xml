@@ -1,0 +1,19 @@
+<!-- PUT this into /domain/[domain]/user/[user]/script/CreatePresentationScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the create presentation action, matching ONLY numeric collection</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>		
+				<uri>/domain/sn.devel/user/.*collection/[0-9]+/video</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.CreatePresentationAction" />
+	</actionset>
+</fsxml>

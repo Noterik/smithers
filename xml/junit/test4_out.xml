@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<fsxml>
+	<presentation id='myid'>
+		<properties>
+			<info>properties junit test presentation</info>
+		</properties>
+	</presentation>
+</fsxml>

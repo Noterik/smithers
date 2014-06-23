@@ -1,0 +1,17 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for OU for creating the second raw audio properties</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/user/.*/rawaudio/1</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.ou.OUCreateRawAudio2Action" />
+	</actionset>
+</fsxml>

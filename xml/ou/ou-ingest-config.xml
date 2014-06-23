@@ -1,0 +1,89 @@
+		
+<!-- PUT this in /domain/ou.devel/config/ingest/properties --> 	
+	
+	<fsxml>
+		<properties>
+			<title>Config for the OU domain ingest</title>
+			<description>This configuration is used in the assets ingest</description>
+		</properties>
+		<setting id="audio">
+			<properties>
+				<title>Audio settings of OU</title>
+			</properties>
+			<profile id="1">
+				<properties/>
+				<ftpconfig id="1">
+					<properties>
+						<enabled>true</enabled>
+						<offset>4</offset>
+						<servers>12</servers>
+						<prefix>stream</prefix>
+						<suffix>.noterik.com</suffix>
+						<mount>stream</mount>
+					</properties>
+				</ftpconfig>
+			</profile>
+			<profile id="2">
+				<properties/>
+				<ftpconfig id="1">
+					<properties>
+						<enabled>true</enabled>
+						<internal>false</internal>
+						<server>cw2.noterik.com</server>
+						<user>levi</user>
+						<pass>levi</pass>
+					</properties>
+				</ftpconfig>
+			</profile>
+		</setting>
+		<setting id="image">
+			<properties/>
+		</setting>
+		<setting id="video">
+			<properties/>
+			<profile id="1">
+				<properties>
+					<original>true</original>					
+				</properties>
+				<encodingprofile id="1">
+					<properties/>
+				</encodingprofile>
+				<ftpconfig id="1">
+					<properties>
+						<enabled>true</enabled>
+						<offset>4</offset>
+						<servers>12</servers>
+						<prefix>stream</prefix>
+						<suffix>.noterik.com</suffix>
+						<mount>stream</mount>
+					</properties>
+				</ftpconfig>
+			</profile>
+			<profile id="2">
+				<properties>
+					<redo>true</redo>					
+				</properties>
+				<encodingprofile id="1">
+					<properties>
+						<format>wmv</format>
+						<extension>wmv</extension>
+						<wantedwidth>640</wantedwidth>
+						<wantedheight>360</wantedheight>
+						<wantedbitrate>100000</wantedbitrate>
+						<wantedframerate>25</wantedframerate>
+						<wantedkeyframerate>25</wantedkeyframerate>
+						<wantedaudiobitrate>44100</wantedaudiobitrate>
+					</properties>
+				</encodingprofile>
+				<ftpconfig id="1">
+					<properties>
+						<enabled>true</enabled>
+						<internal>false</internal>
+						<server>cw2.noterik.com</server>
+						<user>levi</user>
+						<pass>levi</pass>
+					</properties>
+				</ftpconfig>
+			</profile>	
+		</setting>
+	</fsxml>

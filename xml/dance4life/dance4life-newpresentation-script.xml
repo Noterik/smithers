@@ -1,0 +1,17 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger responsible for sending email</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>filter</type>
+				<uri>/domain/dance4life/user/.*/presentation</uri>
+				<method>POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.dance4life.EmailAction" />
+	</actionset>	
+</fsxml>

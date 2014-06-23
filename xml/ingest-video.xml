@@ -1,0 +1,22 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger that listens to the ingest property of raw videos in order to ingest files
+		into the cluster</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<!-- 
+				  user part is needed, otherwise putting the rawvideo in the queue will 
+				  also trigger the same action, causing an endless recursive loop ;) 
+				-->
+				<uri>/user/.*/rawvideo/*</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.common.ingest.IngestVideoAction" />
+	</actionset>
+</fsxml>

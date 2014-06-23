@@ -1,0 +1,43 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the at5 ingest functionality</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/user/videoadmin/ingest/</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.at5.AT5IngestAction" />
+	</actionset>	
+	
+	<actionset id="2">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/user/.*/rawvideo/</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.at5.AT5CallbackAction" />
+	</actionset>
+	
+	<actionset id="3">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/user/.*/screens/1</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.at5.AT5CallbackAction" />
+	</actionset>
+</fsxml>

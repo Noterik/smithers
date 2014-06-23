@@ -1,0 +1,19 @@
+<!-- PUT this into /domain/[domain]/user/[user]/script/SetRedoTrueScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger to set the redo tag to true</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>				
+				<uri>/domain/[domain]/user/.*/video/.*/rawvideo</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.SetRedoScreensAction" />
+	</actionset>		
+</fsxml>

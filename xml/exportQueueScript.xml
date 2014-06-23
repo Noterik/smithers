@@ -1,0 +1,19 @@
+<!-- PUT this into /domain/[domain]/script/ExportQueueScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger to put an export in the Otto queue</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>		
+				<uri>/user/.*/export/[^/]+$</uri>
+				<method>POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.OttoQueueAction" />
+	</actionset>
+</fsxml>

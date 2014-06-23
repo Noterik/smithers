@@ -1,0 +1,21 @@
+<!-- PUT this into /domain/ou.devel/config/videoftpscript/properties -->
+
+<fsxml>
+	<properties/>
+	<ftp id="1">
+		<properties>
+			<enabled>true</enabled>
+			<server>cw2.noterik.com</server>
+			<user>levi</user>
+			<pass>levi</pass>
+		</properties>
+	</ftp>	
+	<ftp id="2">
+		<properties>
+			<enabled>true</enabled>
+			<server>cw2.noterik.com</server>
+			<user>levi</user>
+			<pass>levi</pass>
+		</properties>
+	</ftp>		
+</fsxml>

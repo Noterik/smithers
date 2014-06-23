@@ -1,0 +1,16 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>gives the top10 presentations for the dance4life contest</info>
+	</properties>
+	
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>timer</type>
+				<milis>600000</milis>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.dance4life.Top10Action" />
+	</actionset>	
+</fsxml>

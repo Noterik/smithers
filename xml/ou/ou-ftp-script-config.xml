@@ -1,0 +1,25 @@
+<!-- PUT this into /domain/ou/config/ftpscript/properties 
+
+      ****** Still needs the ftp information from castup!!! ******
+
+-->
+
+<fsxml>
+	<properties/>
+	<ftp id="1">
+		<properties>
+			<enabled></enabled>
+			<server></server>
+			<user></user>
+			<pass></pass>
+		</properties>
+	</ftp>
+	<ftp id="2">
+		<properties>
+			<enabled></enabled>
+			<server></server>
+			<user></user>
+			<pass></pass>
+		</properties>
+	</ftp>		
+</fsxml>

@@ -1,0 +1,21 @@
+<!-- PUT this into /domain/[domain]/script/CollectionIndexScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the collection indexing</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+			<action id="1" referid="java://com.noterik.bart.fs.action.CollectionIndexAction">
+		<properties/>
+		</action>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/domain/[domain]/user/[^/]+/collection/[^/]+</uri>
+				<method>PUT|POST|DELETE</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+	</actionset>
+</fsxml>

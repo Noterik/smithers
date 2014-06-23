@@ -1,0 +1,31 @@
+<!-- PUT this into /domain/[domain]/user/[user]/script/NelsonQueueScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the nelson queueing action</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>		
+				<uri>/domain/examples/user/.*/screens/</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.NelsonQueueAction" />
+	</actionset>
+	<actionset id="2">
+		<properties/>		
+		<condition id="1">
+			<properties>
+				<type>filter</type>				
+				<uri>/domain/examples/user/.*/image/.*/rawimage/</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.NelsonQueueAction" />
+	</actionset>	
+</fsxml>

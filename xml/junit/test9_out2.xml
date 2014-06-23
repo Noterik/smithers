@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<fsxml>
+	<presentation id='1'>
+		<properties>
+			<info>junit test presentation</info>
+		</properties>
+		<videoplaylist id='1'>
+			<properties>
+				<info>junit test videoplaylist (updated single property)</info>
+			</properties>
+		</videoplaylist>
+		<videoplaylist id='2' referid='/domain/examples/user/junit/presentation/1/videoplaylist/1'>
+			<properties>
+				<info>junit test videoplaylist (updated single property)</info>
+			</properties>
+		</videoplaylist>
+	</presentation>
+</fsxml>

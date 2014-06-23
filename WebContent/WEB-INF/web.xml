@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	
+	<!-- name to display in management console -->
+	<display-name>filesystem service</display-name>
+	
+	<!-- Application class name -->
+	<context-param>
+		<param-name>org.restlet.application</param-name>
+		<param-value>com.noterik.bart.fs.restlet.FSApplication</param-value>
+	</context-param>
+
+	<!-- Restlet adapter -->
+	<servlet>
+		<servlet-name>RestletServlet</servlet-name>
+		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!-- Catch all requests -->
+	<servlet-mapping>
+		<servlet-name>RestletServlet</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
+	
+	<!-- listener that initializes server, since Application.start() is no longer called upon context load in restlet 2.x -->
+  	<listener>
+  		<listener-class>com.noterik.bart.fs.SmithersContextListener</listener-class>
+  	</listener>
+	
+	<!-- homer/marge -->
+  	<servlet>
+		<servlet-name>MargeServlet</servlet-name>
+		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
+		<!-- Application class name -->
+		<init-param>
+			<param-name>org.restlet.application</param-name>
+			<param-value>com.noterik.bart.marge.restlet.MargeRestletApplication</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>MargeServlet</servlet-name>
+	    <url-pattern>/marge/*</url-pattern>
+	</servlet-mapping>
+
+</web-app>

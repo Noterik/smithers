@@ -1,0 +1,21 @@
+<!-- PUT this into /domain/[domain]/script/CreateMaggieIndexScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for creating the maggie configuration when a new index is created</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+			<action id="1" referid="java://com.noterik.bart.fs.action.user.CreateMaggieIndexAction">
+		<properties/>
+		</action>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/domain/[domain]/user/[^/]+/config/[^/]+$</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+	</actionset>
+</fsxml>

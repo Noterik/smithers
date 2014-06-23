@@ -1,0 +1,83 @@
+<!-- PUT this to /domain/examples/config/ingest/properties -->
+
+<fsxml>
+	<properties>
+		<title>Config for the OU domain ingest</title>
+		<description>This configuration is used in the assets ingest</description>
+	</properties>
+	<setting id="video">
+		<properties>
+			<title>Video settings</title>
+		</properties>
+		<profile id="1">
+			<properties/>				
+			<encodingprofile id="1">
+				<original>true</original>
+			</encodingprofile>
+			<ftpconfig id="1">
+				<properties>
+					<enabled>true</enabled>
+					<offset>4</offset>
+					<servers>12</servers>
+					<prefix>stream</prefix>
+					<suffix>.noterik.com</suffix>
+					<mount>stream</mount>
+				</properties>
+			</ftpconfig>			
+		</profile>
+		<profile id="2">
+			<properties>
+				<redo>true</redo>
+			</properties>
+			<encodingprofile id="1">
+				<format>wmv</format>
+				<extension>wmv</extension>
+				<wantedwidth>640</wantedwidth>
+				<wantedheight>360</wantedheight>
+				<wantedbitrate>100000</wantedbitrate>
+				<wantedframerate>25</wantedframerate>
+				<wantedkeyframerate>25</wantedkeyframerate>
+				<wantedaudiobitrate>44100</wantedaudiobitrate>
+			</encodingprofile>
+			<ftpconfig id="1">
+				<properties>
+					<enabled>true</enabled>
+					<internal>false</internal>
+					<server>ftp.ou.com</server>
+					<user>user</user>
+					<pass>pass</pass>
+				</properties>
+			</ftpconfig>
+		</profile>
+	</setting>
+	<setting id="image">
+		<properties>
+			<title>Image settings</title>
+		</properties>
+		<profile id="1">
+			<imageprofile>
+				<properties>
+					<rawindex>2</rawindex>
+					<width>125</width>
+					<height>94</height>
+					<extension>jpg</extension>
+				</properties>
+			</imageprofile>
+			<ftpconfig id="1">
+				<properties>
+					<enabled>true</enabled>
+					<offset>0</offset>
+					<servers>2</servers>
+					<prefix>images</prefix>
+					<suffix>.noterik.com</suffix>
+					<mount>images</mount>
+				</properties>
+			</ftpconfig>
+		</profile>
+	</setting>
+	<setting id="audio">
+		<properties>
+			<title>Audio settings</title>
+		</properties>
+	</setting>		
+</fsxml>

@@ -1,0 +1,8 @@
+<fsxml mimetype="application/fscommand" id="useradd">
+	<properties>
+		<!-- username -->
+		<username></username> 
+		<!-- password (optional. default is user+12) -->
+		<password></password>
+	</properties>
+</fsxml>

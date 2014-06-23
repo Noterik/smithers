@@ -1,0 +1,10 @@
+<fsxml mimetype="application/fscommand" id="shift">
+	<properties>
+		<!-- inpoint from where the command should start moving events. should either be -Inf or a number -->
+		<from></from> 
+		<!-- outpoint from where the command should stop moving events. should either be Inf or a number -->
+		<to></to> 
+		<!-- number of milliseconds to shift -->
+		<millis></millis>
+	</properties>
+</fsxml>

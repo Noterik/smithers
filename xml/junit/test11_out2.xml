@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<fsxml>
+	<properties>
+		<depth>0</depth>
+		<start>0</start>
+		<limit>-1</limit>
+		<totalResultsAvailable>3</totalResultsAvailable>
+		<totalResultsReturned>3</totalResultsReturned>
+	</properties>
+	<presentation id='1' />
+	<presentation id='2' />
+	<presentation id='3' />
+</fsxml>

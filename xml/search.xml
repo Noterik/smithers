@@ -1,0 +1,35 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>example search script</info>
+	</properties>
+	
+	<input id="search">
+		<properties>
+			<uri>/domain/examples/user/jaap</uri>
+			<!--
+			<query></query>
+			<start></start>
+			<limit></limit>
+			<sort></sort>
+			<childs></childs>
+			-->
+		</properties>
+	</input>
+	
+	<output id="1">
+		<properties />
+	</output>
+	
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/user/.*/script/search/input/.*</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.common.search.SearchAction" />
+	</actionset>	
+</fsxml>

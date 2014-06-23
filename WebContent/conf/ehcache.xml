@@ -1,0 +1,50 @@
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="ehcache.xsd">
+
+    <diskStore path="java.io.tmpdir"/>
+    
+    <cacheManagerEventListenerFactory class="" properties=""/>
+
+	<!-- 
+	  Peer discover is done using multicast
+	-->
+    <cacheManagerPeerProviderFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerProviderFactory"
+            properties="peerDiscovery=automatic,
+                        multicastGroupAddress=230.0.0.1,
+                        multicastGroupPort=4446, timeToLive=32"
+            propertySeparator=","
+            />
+
+    <cacheManagerPeerListenerFactory
+            class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory"/>
+
+	<!-- 
+	  All caches should be eternal, should not overflow to disk and use the LRU method
+	-->
+    <defaultCache
+            maxElementsInMemory="10000"
+            eternal="true"
+            timeToIdleSeconds="0"
+            timeToLiveSeconds="0"
+            overflowToDisk="false"
+            diskSpoolBufferSizeMB="30"
+            maxElementsOnDisk="10000000"
+            diskPersistent="false"
+            diskExpiryThreadIntervalSeconds="120"
+            memoryStoreEvictionPolicy="LRU">
+            
+            <!-- 
+              All caches should use RMI replication, where put/updates/deletes should 
+              not copy the content of the updates, but only send a remove signal. 
+            -->
+            <cacheEventListenerFactory
+                class="net.sf.ehcache.distribution.RMICacheReplicatorFactory"
+                properties="replicateAsynchronously=false, 
+                			replicatePuts=true,
+                            replicateUpdates=true,                             
+                            replicateRemovals=true,
+                            replicateUpdatesViaCopy=false"/>
+    </defaultCache>
+
+</ehcache>

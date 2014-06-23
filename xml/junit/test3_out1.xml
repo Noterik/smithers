@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<fsxml>
+	<properties>
+		<depth>10</depth>
+		<start>0</start>
+		<limit>-1</limit>
+		<totalResultsAvailable>2</totalResultsAvailable>
+		<totalResultsReturned>2</totalResultsReturned>
+	</properties>
+	<presentation id='1'>
+		<properties>
+			<info>properties junit test presentation</info>
+		</properties>
+	</presentation>
+	<presentation id='2'>
+		<properties>
+			<info>properties junit test presentation</info>
+		</properties>
+	</presentation>
+</fsxml>

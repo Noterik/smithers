@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<fsxml>
+	<video id="1">
+		<properties/>
+		<rawvideo id="1">
+			<properties>
+				<state>done</state>
+				<format>H.264</format>
+				<extension>mp4</extension>
+				<original>true</original>
+				<wantedwidth>640</wantedwidth>
+				<wantedheight>360</wantedheight>
+				<wantedbitrate>450000</wantedbitrate>
+				<wantedframerate>25</wantedframerate>
+				<wantedkeyframerate>25</wantedkeyframerate>
+				<wantedaudiobitrate>320000</wantedaudiobitrate>
+				<mount>stream8,stream11</mount>
+			</properties>
+		</rawvideo>
+	</video>
+</fsxml>

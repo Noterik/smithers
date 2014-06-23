@@ -1,0 +1,14 @@
+<!-- AUTHOR: j.blom@noterik.nl -->
+
+<fsxml>
+	<properties>
+		<!-- THE FILESYSTEM URI OF THE DESTINATION-->
+		<destinationuri>/domain/examples/user/jaap/video/1/rawvideo/1</destinationuri>
+		
+		<!-- THE EXACT INPUT PATH REACHABLE BY SMITHERS -->
+		<source>/usr/local/va-data4/domain/examples/ingest/3453425234/input/test.mp4</source>
+		
+		<!-- THIS ID IS USED SO FILES FROM THE SAME COLLECTION WILL END UP ON THE SAME STREAMING SERVER -->
+		<collection>1</collection>		
+	</properties>
+</fsxml>

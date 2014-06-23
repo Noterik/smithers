@@ -1,0 +1,11 @@
+<fsxml mimetype="application/fscommand" id="search">
+	<properties>
+		<uri>/domain/ou/user/admin/video</uri>
+		<query/>
+		<start>0</start>
+		<limit>10</limit>
+		<sort/>
+		<childs/>
+		<fullresults>true</fullresults>
+	</properties>
+</fsxml>

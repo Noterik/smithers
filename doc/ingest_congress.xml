@@ -1,0 +1,55 @@
+<fsxml>
+	<properties>
+		<video>			
+			<basedir>/usr/local/data/va-data4</basedir>
+			<transcode>false</transcode>
+			<ftp>
+				<enabled>true</enabled>
+				<offset>4</offset>
+				<servers>12</servers>
+				<prefix>stream</prefix>
+				<suffix>.noterik.com</suffix>
+				<mount>stream</mount>
+			</ftp>
+		</video>
+		<image>
+			<basedir>/usr/local/data/va-index</basedir>
+			<ftp>
+				<enabled>true</enabled>
+				<prefix>images</prefix>
+				<suffix>.noterik.com</suffix>
+				<user>images</user>
+				<pass>images</pass>
+				<path>images</path>
+			</ftp>
+			<rawimage id="2">
+				<properties>
+					<width>1040</width>
+					<height>720</height>
+					<extension>jpg</extension>
+					<mount>images1</mount>						
+				</properties>
+			</rawimage>
+			<rawimage id="3">
+				<properties>
+					<width>200</width>
+					<height>138</height>
+					<extension>jpg</extension>
+					<mount>images1</mount>						
+				</properties>
+			</rawimage>
+		</image>
+		<audio>
+			<basedir>/usr/local/data/va-index</basedir>
+			<ftp>
+				<enabled>true</enabled>
+				<offset>4</offset>
+				<servers>12</servers>
+				<prefix>stream</prefix>
+				<suffix>.noterik.com</suffix>
+				<mount>stream</mount>
+			</ftp>
+		</audio>
+	</properties>
+</fsxml>
+			

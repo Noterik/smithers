@@ -1,0 +1,17 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the viewcount functionality</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>filter</type>
+				<uri>/domain/dance4life/user/anonymous/view/.*</uri>
+				<method>POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.dance4life.ViewCountAction" />
+	</actionset>	
+</fsxml>

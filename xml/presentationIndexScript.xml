@@ -1,0 +1,19 @@
+<!-- PUT this into /domain/[domain]/script/PresentationIndexScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for the presentation indexing</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+		<condition id="1">
+			<properties>
+				<type>filter</type>		
+				<uri>/domain/[domain]/service/smithers/queue/presentationindex</uri>
+				<method>PUT</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.PresentationIndexAction" />
+	</actionset>
+</fsxml>

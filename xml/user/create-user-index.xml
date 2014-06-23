@@ -1,0 +1,21 @@
+<!-- PUT this into /domain/[domain]/script/CreateUserIndexScript/properties -->
+
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>trigger for creating the default indexes for a user</info>
+	</properties>
+	<actionset id="1">
+		<properties/>
+			<action id="1" referid="java://com.noterik.bart.fs.action.user.CreateUserIndexAction">
+		<properties/>
+		</action>
+		<condition id="1">
+			<properties>
+				<type>filter</type>
+				<uri>/domain/[domain]/user/[^/]+$</uri>
+				<method>PUT|POST</method>
+				<mimetype>.*</mimetype>
+			</properties>
+		</condition>
+	</actionset>
+</fsxml>

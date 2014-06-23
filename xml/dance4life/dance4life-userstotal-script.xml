@@ -1,0 +1,16 @@
+<fsxml mimetype="application/fsscript">
+	<properties>
+		<info>gives the total number of users participating in the dance4life contest</info>
+	</properties>
+	
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>timer</type>
+				<milis>600000</milis>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.dance4life.NumberOfUsersAction" />
+	</actionset>	
+</fsxml>

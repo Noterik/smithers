@@ -1,0 +1,9 @@
+<fsxml>
+	<properties>
+		<videoprofile>flash7</videoprofile>
+		<filename>test.flv</filename>
+		<collection>2</collection>
+		<destination>/domain/examples/user/jaap/video/1</destination>
+		<assettype>video</assettype>
+	</properties>
+</fsxml>

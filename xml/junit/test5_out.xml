@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<fsxml>
+	<presentation id='1'>
+		<properties>
+			<info>junit test presentation</info>
+		</properties>
+		<videoplaylist id='1'>
+			<properties>
+				<description>junit videoplaylist test, without id</description>
+			</properties>
+		</videoplaylist>
+		<videoplaylist id='home'>
+			<properties>
+				<description>junit videoplaylist test, with id</description>
+			</properties>
+		</videoplaylist>
+	</presentation>
+</fsxml>

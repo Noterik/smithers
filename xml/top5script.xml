@@ -1,0 +1,22 @@
+<fsxml mimetype="application/fsscript">
+	<cacherule>
+		<properties>
+			<timeToLiveMilis>10000</timeToLiveMilis>
+		</properties>
+	</cacherule>	
+	
+	<properties>
+		<info>gives the top5 videos</info>
+	</properties>
+	
+	<actionset id="1">
+		<properties/>
+		<condition>
+			<properties>
+				<type>timer</type>
+				<milis>10000</milis>
+			</properties>
+		</condition>
+		<action id="1" referid="java://com.noterik.bart.fs.action.Top5Action" />
+	</actionset>	
+</fsxml>
