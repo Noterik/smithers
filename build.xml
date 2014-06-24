@@ -139,9 +139,12 @@
 
 	<!-- War package build -->
 	<target name="deploy-war" depends="clean, build">
-		<copy todir="${webcontent.lib.dir}" file="${package.location.jar}" />
+        <copy todir="${webcontent.lib.dir}" file="${package.location.jar}" />
+		
 		<war destfile="${package.location.war}" webxml="${webcontent.dir}/WEB-INF/web.xml">
-			<fileset dir="${webcontent.dir}"/>
+			<fileset dir="${webcontent.dir}">
+				<exclude name="WEB-INF/lib/mojo.jar"/>
+			</fileset>
 		</war>
 	</target>
 
