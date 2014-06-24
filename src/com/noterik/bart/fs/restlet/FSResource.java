@@ -99,7 +99,7 @@ public class FSResource extends FSDefaultResource {
 			String error = FSXMLBuilder.getErrorMessage("403", "Permission denied", "Please log in","http://teamelements.noterik.com/team");
 			rep = new StringRepresentation(error,MediaType.TEXT_XML);
 		} else {
-			String data = getRequestBodyData(getRequest().getEntity());		
+			String data = getRequestBodyData(getRequest().getEntity());	
 			rep = FSXMLRequestHandler.instance().handleGET(getResourceUri(),data);
 		}
 		
