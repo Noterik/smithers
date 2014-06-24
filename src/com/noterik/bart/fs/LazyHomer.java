@@ -17,6 +17,7 @@ import java.util.Set;
 
 import org.apache.log4j.*;
 import org.dom4j.*;
+import org.springfield.mojo.interfaces.ServiceManager;
 
 import com.noterik.springfield.tools.HttpHelper;
 
@@ -339,6 +340,7 @@ public class LazyHomer implements MargeObserver {
 	        	  sp.setAlive(true); // since talking its alive 
 	        	  selectedsmithers = sp;
 	        	  registered = checkKnown();
+	        	  ServiceManager.setService(new ServiceHandler());
 	          } else {
 	        	  setLastSeen();
 	        	  //setMargeStats();
