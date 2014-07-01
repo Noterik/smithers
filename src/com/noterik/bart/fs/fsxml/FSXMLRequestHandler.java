@@ -274,6 +274,7 @@ public class FSXMLRequestHandler {
 		if (params.size()>0) {
 			curi = uri + params.toString();
 		}
+		
 		// hack daniel. lets hook it into our temp cache
 		Document doc = cache.get(curi);
 		if (doc!=null && curi.indexOf("properties")==-1 && curi.indexOf("/euscreen/")!=-1) {
@@ -287,7 +288,7 @@ public class FSXMLRequestHandler {
 			long timer_end = new Date().getTime();
 			System.out.println("HIT LOADTIME_URL="+(timer_end-timer_start)+" uri="+curi+" CP="+cache.getPerformance()+" CS="+cache.getCacheSize());
 			return dr;
-		}
+		} // end of cache check 
 		
 		
 		//Document doc = null;

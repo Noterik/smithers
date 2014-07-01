@@ -283,7 +283,7 @@ public class ActionSet implements Serializable{
 				actionClass = Class.forName(className);
 				action = (Action)actionClass.newInstance();
 			} catch(Exception e) {
-				logger.error("Error while initiating class: "+className+", for id: "+id,e);
+				logger.error("Error while initiating class: "+className+", for id: "+id);
 			}
 
 			if(action!=null) {
