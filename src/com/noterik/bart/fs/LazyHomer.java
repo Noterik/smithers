@@ -149,6 +149,7 @@ public class LazyHomer implements MargeObserver {
 	
 	public static void setLastSeen() {
 		Long value = new Date().getTime();
+		System.out.println("Seeting last seen for smithers ip="+myip);
 		LazyHomer.sendRequest("PUT", "/domain/internal/service/smithers/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
 	}
 	
@@ -329,8 +330,6 @@ public class LazyHomer implements MargeObserver {
 	    public void run() {
 	      while (running) {
 	        try {
-	          sleep(10000);
-
 	          // very weird way to start
 	          if (!registered) {
 	        	  // lets create myself as a smithers
@@ -346,7 +345,11 @@ public class LazyHomer implements MargeObserver {
 	        	  //setMargeStats();
 	        	  //setHomerStats();
 	          }
-	          
+	        } catch(Exception e1) {
+	        	e1.printStackTrace();
+	        }
+	        try {  
+	          sleep(10*1000);
 	        } catch (InterruptedException e) {
 	          throw new RuntimeException(e);
 	        }

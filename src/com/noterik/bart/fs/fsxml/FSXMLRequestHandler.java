@@ -267,7 +267,8 @@ public class FSXMLRequestHandler {
 		// get parameters from request body
 		long timer_start = new Date().getTime();
 
-
+		//System.out.println("SMITERS GET="+uri+" "+value);
+		
 		Map<String, String> params = getParameters(value);
 		//System.out.println("REQ="+uri+" P="+params.toString()+" V="+value);
 		String curi = uri;
