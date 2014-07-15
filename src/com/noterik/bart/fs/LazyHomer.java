@@ -149,7 +149,6 @@ public class LazyHomer implements MargeObserver {
 	
 	public static void setLastSeen() {
 		Long value = new Date().getTime();
-		System.out.println("Seeting last seen for smithers ip="+myip);
 		LazyHomer.sendRequest("PUT", "/domain/internal/service/smithers/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
 	}
 	
