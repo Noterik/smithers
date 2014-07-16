@@ -78,7 +78,7 @@ public class CopyCommand implements Command {
 		String destination = input.getProperty("destination");
 		String params = input.getProperty("params");
 		logger.debug("source: "+source+", destination: "+destination+", params: "+params);
-		
+		//System.out.println("source: "+source+", destination: "+destination+", params: "+params);	
 		
 		// determine optional parameters
 		boolean recursive=false, override=false;
@@ -205,6 +205,7 @@ public class CopyCommand implements Command {
 			}			
 		}		
 		logger.debug(props.toString());
+		//System.out.println("PROPS="+props.toString());
 		return props;
 	}
 

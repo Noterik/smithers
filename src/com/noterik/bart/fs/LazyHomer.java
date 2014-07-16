@@ -19,6 +19,7 @@ import org.apache.log4j.*;
 import org.dom4j.*;
 import org.springfield.mojo.interfaces.ServiceManager;
 
+import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.springfield.tools.HttpHelper;
 
 public class LazyHomer implements MargeObserver {
@@ -329,8 +330,6 @@ public class LazyHomer implements MargeObserver {
 	    public void run() {
 	      while (running) {
 	        try {
-	          sleep(10000);
-
 	          // very weird way to start
 	          if (!registered) {
 	        	  // lets create myself as a smithers
@@ -346,7 +345,11 @@ public class LazyHomer implements MargeObserver {
 	        	  //setMargeStats();
 	        	  //setHomerStats();
 	          }
-	          
+	        } catch(Exception e1) {
+	        	e1.printStackTrace();
+	        }
+	        try {  
+	          sleep(10*1000);
 	        } catch (InterruptedException e) {
 	          throw new RuntimeException(e);
 	        }
@@ -447,5 +450,29 @@ public class LazyHomer implements MargeObserver {
 			return serviceAddress;
 		}
 		return null;
+	}
+	
+	/**
+	 * @return - Returns the domains this smithers is configured to handle the timer scripts
+	 */
+	public static String[] getTimerScriptDomains() {
+		String[] domains = new String[0];
+		
+		//check if IP is already initialized
+		if (myip.equals("unknown")) {
+			try{
+				InetAddress mip=InetAddress.getLocalHost();
+				myip = ""+mip.getHostAddress();
+			}catch (Exception e){
+				LOG.error("Exception ="+e.getMessage());
+			}
+		}
+
+		String response = FSXMLRequestHandler.instance().getPropertyValue("/domain/internal/service/smithers/nodes/"+myip+"/properties/timerscriptdomains");
+
+		if (response != null) {
+			domains = response.split(",");
+		}		
+		return domains;
 	}
 }

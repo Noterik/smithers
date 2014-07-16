@@ -13,9 +13,11 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
+import com.noterik.bart.fs.LazyHomer;
 import com.noterik.bart.fs.action.Action;
 import com.noterik.bart.fs.triggering.TriggerEvent;
 import com.noterik.bart.fs.type.ReferUriType;
+import com.noterik.springfield.tools.fs.URIParser;
 
 /**
  * Class to define what actions are performed when specific 
@@ -75,6 +77,8 @@ public class ActionSet implements Serializable{
 	private FSScript script; 
 
 	private TriggerEvent triggerEvent;
+	
+	private ActionClassLoader actionClassLoader;
 	/**
 	 * Parses xml into a ActionSet
 	 *
@@ -241,14 +245,31 @@ public class ActionSet implements Serializable{
 				
 				logger.debug("adding filter condition: uri=" + p_uri + ", method="+p_method+", mimetype="+p_mimetype);
 				addCondition(cond);
-			} else {
-				milis = node.valueOf("properties/milis");
-				TimerCondition timerCondition = new TimerCondition(Long.parseLong(milis), actions);
-				Timer timer = new Timer();
-				timer.schedule(timerCondition, 1000, Long.parseLong(milis));			
-				addTimerCondition(timer);
+			} else if (type.equals("periodically")){
+				logger.info("Found periodically script "+this.id);
+				//check if this smithers is configured to handle this timer
+				String[] validDomains = LazyHomer.getTimerScriptDomains();
+				boolean valid = false;
 				
-				logger.debug("adding timer condition: milis=" + milis);
+				String domain = URIParser.getDomainFromUri(this.id);
+				
+				for (String validDomain : validDomains) {
+					if (validDomain.equals(domain)) {
+						valid = true;
+					}
+				}
+				
+				if (valid) {
+					milis = node.valueOf("properties/milis");
+					TimerCondition timerCondition = new TimerCondition(Long.parseLong(milis), actions);
+					Timer timer = new Timer();
+					timer.schedule(timerCondition, 1000, Long.parseLong(milis));			
+					addTimerCondition(timer);
+					
+					logger.debug("adding timer condition: milis=" + milis);
+				} else {
+					logger.debug("No matching domain for domain "+domain);
+				}
 			}
 		}
 	}
@@ -268,22 +289,37 @@ public class ActionSet implements Serializable{
 		Node node;
 		Action action;
 		Properties properties;
-		List<Node>paramlist;
-		String className;
-		Class actionClass;
+		String refer;
+		String jarName;
+		String className = "";
+		Class<?> actionClass = null;
 		for(Iterator<Node> iter1 = actionlist.iterator(); iter1.hasNext(); ) {
 			node = iter1.next();
 			action = null;
 
 			// init action class
-			className = node.valueOf("@referid");
-			//System.out.println("NODE="+node.asXML());
+			refer = node.valueOf("@referid");
+
 			try {
-				className = className.substring(ReferUriType.JAVA_URI.getProtocol().length());
-				actionClass = Class.forName(className);
-				action = (Action)actionClass.newInstance();
+				refer = refer.substring(ReferUriType.JAVA_URI.getProtocol().length());
+				
+				//check if we need to load from additional jar
+				if (refer.indexOf("@") != -1) {
+					className = refer.substring(0, refer.indexOf("@"));
+					jarName = refer.substring(refer.indexOf("@")+1);
+
+					logger.info("Loading jar "+jarName+" for class "+className);
+					actionClass = loadJar(jarName, className);		
+				} else {
+					className = refer;
+					actionClass = Class.forName(className);
+				}
+				
+				if (actionClass != null) {
+					action = (Action)actionClass.newInstance();
+				}
 			} catch(Exception e) {
-				logger.error("Error while initiating class: "+className+", for id: "+id);
+				logger.error("Error while initiating class: "+className+", for id: "+id+" "+e);
 			}
 
 			if(action!=null) {
@@ -304,6 +340,28 @@ public class ActionSet implements Serializable{
 				addAction(action);
 			}
 		}
+	}
+	
+	/**
+	 * Load class from external jar
+	 * 
+	 * @param jarName - the name of the jar to load from
+	 * @param className - the class to load
+	 * @return the requested class if successful, otherwise null
+	 */
+	private Class<?> loadJar(String jarName, String className) {
+		Class<?> actionClass = null;
+		
+		if (actionClassLoader == null) {
+			actionClassLoader = new ActionClassLoader();
+		}
+		try {
+			actionClassLoader.setJar(jarName);
+			actionClass = actionClassLoader.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			logger.error("Class "+className+" not found "+e.toString());
+		}
+		return actionClass;
 	}
 	
 	public void setTriggerEvent(TriggerEvent triggerEvent){
