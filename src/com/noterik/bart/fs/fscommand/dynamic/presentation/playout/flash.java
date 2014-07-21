@@ -32,7 +32,6 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.fscommand.DynamicCommand;
-import com.noterik.bart.fs.fscommand.dynamic.playlist.PlaylistGenerator;
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.springfield.tools.fs.FSXMLBuilder;
 import com.noterik.springfield.tools.fs.URIParser;
@@ -355,15 +354,6 @@ public class flash implements DynamicCommand {
 			}
 		}
 		
-		if (selectedplaylist!="") {
-			domainvpconfig = (Element) fsxml.selectSingleNode("//filesystem[@id='1']/videoplaylist[@id='"+selectedplaylist+"']");
-			// ok we have a non default playlist give over the code to playlist generator
-			if (domainvpconfig==null) {
-				pr = PlaylistGenerator.generate(pr,selectedplaylist,handlerparams,null,fsxml);
-			} else {
-				pr = PlaylistGenerator.generate(pr,selectedplaylist,handlerparams,domainvpconfig,fsxml);
-			}
-		}
 
 		return pr;
 	}
