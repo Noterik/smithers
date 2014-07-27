@@ -50,7 +50,7 @@ public class cache {
 	private static String debuglevel = "off";
 	private static int totalreq = 0;
 	private static int hitreq = 0;
-	private static enum methods { GET,POST,PUT,DELETE,TRACE,LINK; }
+	private static enum methods { GET,POST,PUT,DELETE,INFO,TRACE,LINK,AUTH,PAUTH; }
 	private static CacheTableWriter cachewriter = null;
 	private static CacheTableReader cachereader = null;
 	public static Boolean started = false;

@@ -38,7 +38,7 @@ public class LazyMarge extends Thread {
 	private static final Logger LOG = Logger.getLogger(LazyMarge.class);
 	private static boolean running = false;
 	private static Map<String, MargeObserver> observers = new HashMap<String, MargeObserver>();
-	private static enum methods { GET,POST,PUT,DELETE,INFO,LINK; }
+	private static enum methods { GET,POST,PUT,DELETE,INFO,TRACE,LINK,AUTH,PAUTH; }
 	private static MargeTimerThread timerthread = null;
 	MulticastSocket s = null;
 	
