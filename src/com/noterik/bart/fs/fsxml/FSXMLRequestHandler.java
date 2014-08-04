@@ -144,6 +144,7 @@ public class FSXMLRequestHandler {
 			success = true;
 		} catch(Exception e) {
 			logger.error("",e);
+			e.printStackTrace();
 		} 		
 		return success;
 	}
@@ -560,12 +561,15 @@ public class FSXMLRequestHandler {
 					currentType = URIParser.getParentUriPart(current);
 					logger.debug("currentType: " + currentType);
 					
+					
+					System.out.println("Current = "+current+" CT="+currentType+" T="+type);
 					// only remove nodes of certain type
 					if(type.equals(currentType)) {
+						System.out.println("HASPROP="+fsxmlHandler.hasProperties(current));
 						if (fsxmlHandler.hasProperties(current)) {
 							fsxmlHandler.deleteAllPropertiesOfUriTop(current);
 						} else {
-							success = false;
+							success = true;
 						}
 					}
 				}
@@ -902,7 +906,6 @@ public class FSXMLRequestHandler {
 				
 				// send message
 				try {
-					// daniel test
 					cache.signal(InetAddress.getLocalHost().toString(),"GET",uri);
 					
 					// 27apr GlobalConfig.instance().getDispatcher().send(new Message(InetAddress.getLocalHost(),"GET",uri));
@@ -1327,7 +1330,6 @@ public class FSXMLRequestHandler {
 				
 				// send message
 				try {
-					// daniel test
 					cache.signal(InetAddress.getLocalHost().toString(),"DELETE",parentUri);
 					
 					// 27apr GlobalConfig.instance().getDispatcher().send(new Message(InetAddress.getLocalHost(),"DELETE",parentUri));
@@ -1574,7 +1576,6 @@ public class FSXMLRequestHandler {
 				
 				// send message
 				try {
-					// daniel test
 					cache.signal(InetAddress.getLocalHost().toString(),method,uri);
 					
 					// 27apr GlobalConfig.instance().getDispatcher().send(new Message(InetAddress.getLocalHost(),method,uri));
@@ -1668,7 +1669,7 @@ public class FSXMLRequestHandler {
 			 deleteAllPropertiesOfUri(uri, sendEvent);
 			
 			 // remove from cache
-			 String parentUri = URIParser.getParentUri(URIParser.getParentUri(uri));
+			// String parentUri = URIParser.getParentUri(URIParser.getParentUri(uri)); removed daniel didn't do anything
 			 //CacheHandler childCacheHandler = GlobalConfig.instance().getChildCacheHandler();
 			 //childCacheHandler.delete(parentUri);
 		}
@@ -1705,7 +1706,7 @@ public class FSXMLRequestHandler {
 			}
 			FSXMLProperties properties = getProperties(parentUri);
 			String referId = null;
-			if (properties.getReferUri() != null) {
+			if (properties!=null && properties.getReferUri() != null) {
 				referId = properties.getReferUri();
 			}
 			
