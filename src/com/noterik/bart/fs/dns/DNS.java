@@ -72,7 +72,7 @@ public class DNS extends FSResource {
 		
 		logger.debug("domain = "+domain+" identifier = "+identifier);
 
-		String className = Character.toUpperCase(domain.charAt(0))+domain.substring(1)+"Mapping";
+		String className = domain.toUpperCase()+"Mapping";
 		try {
 			Class c = Class.forName(CLASS_BASE+className);
 			Object o = c.newInstance();
