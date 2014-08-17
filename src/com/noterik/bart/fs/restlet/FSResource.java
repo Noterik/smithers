@@ -86,6 +86,7 @@ public class FSResource extends FSDefaultResource {
 	public boolean allowPost() {return true;}
 	public boolean allowGet() {return true;}
 	public boolean allowDelete() {return true;}
+	private boolean httpblocked = true;
 
 	/**
 	 * Determine decision engine 
@@ -113,6 +114,7 @@ public class FSResource extends FSDefaultResource {
 	 */
 	@Get
 	public Representation doGet() {
+		if (httpblocked) return null;
 		logger.debug("GET: "+getResourceUri());
 		Representation rep = null;
 		if (!decisionEngine.decide(getRequest())){
@@ -142,6 +144,7 @@ public class FSResource extends FSDefaultResource {
 	 */
 	@Post
 	public void doPost(Representation representation) {
+		if (httpblocked) return;
 		logger.debug("POST: "+getResourceUri());
 		
 		String data = getRequestBodyData(representation);
@@ -204,6 +207,7 @@ public class FSResource extends FSDefaultResource {
 	 */
 	@Put
 	public void doPut(Representation representation) {
+		if (httpblocked) return;
 		logger.debug("PUT: "+getResourceUri());
 		
 		String data = getRequestBodyData(representation);
@@ -263,6 +267,8 @@ public class FSResource extends FSDefaultResource {
 	 */
 	@Delete
 	public void doDelete() {
+		if (httpblocked) return;
+		
 		logger.debug("DELETE: "+getResourceUri());
 		
 		if (!decisionEngine.decide(getRequest())){

@@ -37,6 +37,7 @@ import java.util.Set;
 
 import org.apache.log4j.*;
 import org.dom4j.*;
+import org.springfield.mojo.interfaces.ServiceInterface;
 import org.springfield.mojo.interfaces.ServiceManager;
 
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
@@ -87,6 +88,7 @@ public class LazyHomer implements MargeObserver {
 		// lets watch for changes in the service nodes in smithers
 //		marge.addObserver("/domain/internal/service/smithers/nodes/"+myip, ins);
 //		marge.addTimedObserver("/smithers/downcheck",6,this);
+  	  ServiceManager.setService(new ServiceHandler());
 		thread = new DiscoveryThread();	
 
 	}
@@ -104,7 +106,10 @@ public class LazyHomer implements MargeObserver {
 	
 	private Boolean checkKnown() {	
 		String xml = "<fsxml><properties><depth>1</depth></properties></fsxml>";
-		String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/smithers/nodes",xml,"text/xml");
+		//String nodes = LazyHomer.sendRequest("GET","/domain/internal/service/smithers/nodes",xml,"text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return false;
+		String nodes = smithers.get("/domain/internal/service/smithers/nodes",xml,"text/xml");
 
 		boolean iamok = false;
 
@@ -158,7 +163,9 @@ public class LazyHomer implements MargeObserver {
 	        		newbody+="<defaultloglevel>info</defaultloglevel>";
 	        	}
 	        	newbody+="</properties></nodes></fsxml>";	
-				LazyHomer.sendRequest("PUT","/domain/internal/service/smithers/properties",newbody,"text/xml");
+       			smithers.put("/domain/internal/service/smithers/properties",newbody,"text/xml");
+
+			//	LazyHomer.sendRequest("PUT","/domain/internal/service/smithers/properties",newbody,"text/xml");
 			}
 		} catch (Exception e) {
 			LOG.info("LazyHomer exception doc");
@@ -170,7 +177,11 @@ public class LazyHomer implements MargeObserver {
 	
 	public static void setLastSeen() {
 		Long value = new Date().getTime();
-		LazyHomer.sendRequest("PUT", "/domain/internal/service/smithers/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return;
+		smithers.put("/domain/internal/service/smithers/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
+
+		//LazyHomer.sendRequest("PUT", "/domain/internal/service/smithers/nodes/"+myip+"/properties/lastseen", ""+value, "text/xml");
 	}
 	
 
@@ -230,32 +241,6 @@ public class LazyHomer implements MargeObserver {
 		return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0);
  	}
 
-	public synchronized static String sendRequest(String method,String url,String body,String contentType) {
-		return sendRequest(method,url,body,contentType,null);
-	}
-	
-	public synchronized static String sendRequest(String method,String url,String body,String contentType,String cookies) {
-		String fullurl = getSmithersUrl()+url;
-		String result = null;
-		boolean validresult = true;
-		
-		// first try 
-		try {
-			result = HttpHelper.sendRequest(method, fullurl, body, contentType,cookies);
-			if (result.indexOf("<?xml")==-1) {
-				LOG.error("FAIL TYPE ONE ("+fullurl+")");
-				LOG.error("XML="+result);
-				validresult = false;
-			}
-		} catch(Exception e) {
-			LOG.error("FAIL TYPE TWO ("+fullurl+")");
-			LOG.error("XML="+result);
-			validresult = false;
-		}
-		
-		LOG.debug("Valid request ("+fullurl+") ");
-		return result;
-	}
 	
 	/**
 	 * get root path
@@ -341,7 +326,7 @@ public class LazyHomer implements MargeObserver {
 	
 	private class DiscoveryThread extends Thread {
 	    private volatile boolean running = true; 
-	    
+	  	  
 		DiscoveryThread() {
 	      super("dthread");
 	      start();
@@ -359,7 +344,7 @@ public class LazyHomer implements MargeObserver {
 	        	  sp.setAlive(true); // since talking its alive 
 	        	  selectedsmithers = sp;
 	        	  registered = checkKnown();
-	        	  ServiceManager.setService(new ServiceHandler());
+	        	//  ServiceManager.setService(new ServiceHandler());
 	          } else {
 	        	  setLastSeen();
 	        	  //setMargeStats();
@@ -438,7 +423,11 @@ public class LazyHomer implements MargeObserver {
 		long mostRecentServiceTime = 0L;
 		
 		service = service.toLowerCase();
-		String response = LazyHomer.sendRequest("GET","/domain/internal/service/"+service+"/nodes",null,null);
+	//	String response = LazyHomer.sendRequest("GET","/domain/internal/service/"+service+"/nodes",null,null);
+		ServiceInterface smithers = ServiceManager.getService("smithers");
+		if (smithers==null) return null;
+		String response = smithers.get("/domain/internal/service/"+service+"/nodes",null,null);
+
 		
 		//Get all nodes for this service
 		try { 
