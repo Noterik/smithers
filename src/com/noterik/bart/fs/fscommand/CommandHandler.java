@@ -39,6 +39,7 @@ public class CommandHandler {
 	private Map<String, Command> commands = new HashMap<String, Command>();
 	private static final String CONFIG_FILE = "commands.xml";
 	private static Logger logger = Logger.getLogger(CommandHandler.class);
+	private CommandClassLoader commandClassLoader;
 
 
 	private CommandHandler(){
@@ -63,15 +64,28 @@ public class CommandHandler {
 					if(n.getName() != null && n.getName().equals("command")){
 						Node idn = n.selectSingleNode("./id");
 						Node cln = n.selectSingleNode("./class");
+						Node jn  = n.selectSingleNode("./jar");
 						if(idn != null && cln != null){
+							
 							String id = idn.getText();
 							String cl = cln.getText();
+							String jar = null;
+							if(jn != null && cl != null) {
+								jar = jn.getText();
+							}
 							if(id != null && cl != null){
 								try {
-									Class c = Class.forName(cl);
-									Object o = c.newInstance();
-									if(o instanceof Command){
-										commands.put(id, (Command)o);
+									if(jar != null) {
+										logger.info("Loading jar "+jar+" for class "+cl);
+										Class<?> commandClass = loadJar(jar, cl);
+										Command o = (Command)commandClass.newInstance();
+										commands.put(id,o);
+									} else {
+										Class c = Class.forName(cl);
+										Object o = c.newInstance();
+										if(o instanceof Command){
+											commands.put(id, (Command)o);
+										}
 									}
 								} catch (ClassNotFoundException e) {
 									//logger.error("",e);
@@ -131,15 +145,28 @@ public class CommandHandler {
 					if(n.getName() != null && n.getName().equals("command")){
 						Node idn = n.selectSingleNode("./id");
 						Node cln = n.selectSingleNode("./class");
+						Node jn = n.selectSingleNode("./jar");
 						if(idn != null && cln != null){
 							String id = idn.getText();
 							String cl = cln.getText();
+							String jar = null;
+							
 							if(id != null && cl != null && id.equals(cid)){
+								if(jn != null && cl != null) {
+									jar = jn.getText();
+								}
 								try {
-									Class c = Class.forName(cl);
-									Object o = c.newInstance();
-									if(o instanceof Command){
-										commands.put(id, (Command)o);
+									if(jar != null) {
+										logger.info("Loading jar "+jar+" for class "+cl);
+										Class<?> commandClass = loadJar(jar, cl);
+										Command o = (Command)commandClass.newInstance();
+										commands.put(id,o);
+									} else {
+										Class c = Class.forName(cl);
+										Object o = c.newInstance();
+										if(o instanceof Command){
+											commands.put(id, (Command)o);
+										}
 									}
 								} catch (ClassNotFoundException e) {
 									logger.error("",e);
@@ -155,6 +182,28 @@ public class CommandHandler {
 			}
 		}
 		return commands.get(cid);
+	}
+	
+	/**
+	 * Load class from external jar
+	 * 
+	 * @param jarName - the name of the jar to load from
+	 * @param className - the class to load
+	 * @return the requested class if successful, otherwise null
+	 */
+	private Class<?> loadJar(String jarName, String className) {
+		Class<?> actionClass = null;
+		
+		if (commandClassLoader == null) {
+			commandClassLoader = new CommandClassLoader();
+		}
+		try {
+			commandClassLoader.setJar(jarName);
+			actionClass = commandClassLoader.loadClass(className);
+		} catch (ClassNotFoundException e) {
+			logger.error("Class "+className+" not found "+e.toString());
+		}
+		return actionClass;
 	}
 
 }
