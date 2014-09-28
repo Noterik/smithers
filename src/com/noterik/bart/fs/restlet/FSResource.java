@@ -86,7 +86,7 @@ public class FSResource extends FSDefaultResource {
 	public boolean allowPost() {return true;}
 	public boolean allowGet() {return true;}
 	public boolean allowDelete() {return true;}
-	private boolean httpblocked = true;
+	private boolean httpblocked = false;
 
 	/**
 	 * Determine decision engine 
