@@ -78,8 +78,10 @@ public class CommandHandler {
 									if(jar != null) {
 										logger.info("Loading jar "+jar+" for class "+cl);
 										Class<?> commandClass = loadJar(jar, cl);
-										Command o = (Command)commandClass.newInstance();
-										commands.put(id,o);
+										if(commandClass != null) {
+											Command o = (Command)commandClass.newInstance();
+											commands.put(id,o);
+										}
 									} else {
 										Class c = Class.forName(cl);
 										Object o = c.newInstance();
@@ -159,8 +161,10 @@ public class CommandHandler {
 									if(jar != null) {
 										logger.info("Loading jar "+jar+" for class "+cl);
 										Class<?> commandClass = loadJar(jar, cl);
-										Command o = (Command)commandClass.newInstance();
-										commands.put(id,o);
+										if(commandClass != null) {
+											Command o = (Command)commandClass.newInstance();
+											commands.put(id,o);
+										}
 									} else {
 										Class c = Class.forName(cl);
 										Object o = c.newInstance();
