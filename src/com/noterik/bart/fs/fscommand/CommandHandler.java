@@ -89,13 +89,8 @@ public class CommandHandler {
 											commands.put(id, (Command)o);
 										}
 									}
-								} catch (ClassNotFoundException e) {
-									//logger.error("",e);
-									System.out.println("command : "+cl+" not in classpath");
-								} catch (InstantiationException e) {
-									logger.error("",e);
-								} catch (IllegalAccessException e) {
-									logger.error("",e);
+								} catch (Exception e) {
+									System.out.println("Problem with loading "+cl);
 								}
 							}
 						}
