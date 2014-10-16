@@ -446,7 +446,7 @@ public class LazyHomer implements MargeObserver {
 					//Check if this service is enabled and recently active
 					if (status.equals("on") && serviceTime >  mostRecentServiceTime) {
 						mostRecentServiceTime = serviceTime;
-						serviceAddress = name;
+						serviceAddress = name+":"+port;
 					}				
 				}
 			}

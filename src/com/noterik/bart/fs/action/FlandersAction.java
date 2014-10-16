@@ -266,7 +266,7 @@ public class FlandersAction extends ActionAdapter {
 			return null;
 		}
 		
-		String flandersUrl = "http://" + address + ":" + port + "/flanders/restlet/extract";
+		String flandersUrl = "http://" + address + "/flanders/restlet/extract";
 		logger.debug("FLANDERS URL: " + flandersUrl);		
 		String stream = server + filename;
 		String attach = "<root><stream>"+stream+"</stream><file>"+filename+"</file></root>";
