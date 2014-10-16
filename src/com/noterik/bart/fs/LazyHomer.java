@@ -438,9 +438,10 @@ public class LazyHomer implements MargeObserver {
 					String name = child.attributeValue("id");
 					String status = child.selectSingleNode("properties/status") == null ? ""  : child.selectSingleNode("properties/status").getText();
 					String lastSeen = child.selectSingleNode("properties/lastseen") == null ? "0"  : child.selectSingleNode("properties/lastseen").getText();
+					String port = child.selectSingleNode("properties/port") == null ? String.valueOf(getSmithersPort()) : child.selectSingleNode("properties/port").getText();
 					long serviceTime = Long.parseLong(lastSeen);
 					
-					LOG.debug("node "+name+" found with status "+status+" lastseen "+lastSeen+" - "+serviceTime);
+					LOG.debug("node "+name+":"+port+" found with status "+status+" lastseen "+lastSeen+" - "+serviceTime);
 					
 					//Check if this service is enabled and recently active
 					if (status.equals("on") && serviceTime >  mostRecentServiceTime) {
