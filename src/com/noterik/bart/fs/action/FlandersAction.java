@@ -73,7 +73,7 @@ public class FlandersAction extends ActionAdapter {
 			} else {
 				logger.debug("Sending request to flanders ("+requestUri+")");
 				String newProperties = processRaw(requestUri, requestBody);
-				FSXMLRequestHandler.instance().saveFsXml(requestUri, newProperties, "PUT", false);
+				FSXMLRequestHandler.instance().saveFsXml(requestUri, newProperties, "PUT", true);
 			}
 		} catch (Exception e) {
 			logger.error("Could not parse request data");
@@ -198,14 +198,13 @@ public class FlandersAction extends ActionAdapter {
 	
 	private  String getXmlFromFlandersLocal(String fileUri, String mount) {
 		String address = LazyHomer.getActiveService("flanders");
-		int port = LazyHomer.getSmithersPort();
 		
 		if (address == null) {
 			logger.error("Could not get active flanders from cluster");
 			return null;
 		}
 		
-		String flandersUrl = "http://" + address + ":" + port + "/flanders/restlet/extract";
+		String flandersUrl = "http://" + address + "/flanders/restlet/extract";
 		logger.debug("FLANDERS URL: " + flandersUrl);		
 		String attach = "<root><mount>" + mount + "</mount><source>" + fileUri + "</source></root>";		
 		logger.debug("FLANDERS REQUEST XML: " + attach);
@@ -259,7 +258,6 @@ public class FlandersAction extends ActionAdapter {
 	
 	private String getXmlFromFlandersExternal(String filename, String server){
 		String address = LazyHomer.getActiveService("flanders");
-		int port = LazyHomer.getSmithersPort();
 		
 		if (address == null) {
 			logger.error("Could not get active flanders from cluster");

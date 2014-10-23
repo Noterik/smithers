@@ -1,5 +1,5 @@
 /* 
-* SetRedoFramesAction.java
+* SetRedoScreensMjpegAction.java
 * 
 * Copyright (c) 2012 Noterik B.V.
 * 
@@ -20,6 +20,8 @@
 */
 package com.noterik.bart.fs.action;
 
+import java.util.ArrayList;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
@@ -29,17 +31,20 @@ import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.springfield.tools.XMLHelper;
 import com.noterik.springfield.tools.fs.URIParser;
 
-public class SetRedoFramesAction extends ActionAdapter {
-	/** the SetRedoFramesAction's log4j Logger */
-	private static Logger logger = Logger.getLogger(SetRedoFramesAction.class);
+public class SetRedoScreensMjpegAction extends ActionAdapter {
+	/**	serialVersionUID */
+	private static final long serialVersionUID = 1L;
+	
+	/** the SetRedoScreensMjpegAction's log4j Logger */
+	private static Logger logger = Logger.getLogger(SetRedoScreensMjpegAction.class);
 	
 	/** constants */
-	private static final String FRAMES_CONFIG_URI = "/domain/{domain}/config/ingest/setting/frames";
-	private static final String DEFAULT_FRAMES_PROPERTIES = "<fsxml><properties><size>320x240</size><interval>1</interval><redo>true</redo></properties></fsxml>";
+	private static final String SCREENS_CONFIG_URI = "/domain/{domain}/config/ingest/setting/screens";
+	private static final String DEFAULT_SCREENS_PROPERTIES = "<fsxml><properties><format>file/mjpeg</format><redo>true</redo></properties></fsxml>";
 	
 	@Override
 	public String run() {		
-		logger.debug("**************************** starting SetRedoFramesAction ************************");
+		logger.debug("**************************** starting SetRedoScreensMjpegAction ************************");
 		String requestBody = event.getRequestData();
 		String uri = event.getUri();
 		String domain = URIParser.getDomainFromUri(uri);
@@ -59,54 +64,54 @@ public class SetRedoFramesAction extends ActionAdapter {
 			// get uri and properties of video
 			String vidUri = uri.substring(0, uri.lastIndexOf("/rawvideo"));
 			
+			Document vidDoc = FSXMLRequestHandler.instance().getNodeProperties(vidUri, false);
+			
 			String transcoder = doc.selectSingleNode("//properties/transcoder") == null ? "" : doc.selectSingleNode("//properties/transcoder").getText();
 
 			// work around so we don't need to fix APU
 			if ( !transcoder.equals("apu") ) {
-				// check is frames are already done
-				Document vidDoc = FSXMLRequestHandler.instance().getNodeProperties(vidUri, false);
-				boolean hasFrames = vidDoc.selectSingleNode(".//frames") != null;
-				if(hasFrames){
-					logger.debug("Frames are already present. No need to set redo to true.");
+				// check is screens are already done
+				boolean hasScreens = vidDoc.selectSingleNode(".//screens") != null;
+				if(hasScreens){
+					logger.debug("Screens are already present. No need to set redo to true.");
 					return null;
 				}				
 			}			
 			
-			logger.debug("Frames properties will be created");
+			logger.debug("Screens properties will be created");
 			// get uri of redo tag
-			String framesUri = vidUri + "/frames/1/properties";
-			logger.debug("framesUri: " + framesUri);
+			String screensUri = vidUri + "/screens/1/properties";
+			logger.debug("screensUri: " + screensUri);
 			
 			// check for domain preferences
-			String frameProperties = DEFAULT_FRAMES_PROPERTIES;
-			String configURI = FRAMES_CONFIG_URI.replace("{domain}", domain);
+			String screenProperties = DEFAULT_SCREENS_PROPERTIES;
+			String configURI = SCREENS_CONFIG_URI.replace("{domain}", domain);
 			Document configDoc = FSXMLRequestHandler.instance().getNodeProperties(configURI, false);
 			if(configDoc != null) {
-				logger.debug("Custom frames profile");
-				Node configProperties = configDoc.selectSingleNode("//framesprofile/properties");
-				frameProperties = "<fsxml>"+configProperties.asXML()+"</fsxml>";
+				logger.debug("Custom screens profile");
+				Node configProperties = configDoc.selectSingleNode("//screensprofile/properties");
+				screenProperties = "<fsxml>"+configProperties.asXML()+"</fsxml>";
 			}
 			
 			//if apu most likely only 1 raw available, always use raw 1 otherwise job might never get executed
-			if (transcoder.equals("apu")) {	
-				Document sProperties = XMLHelper.asDocument(frameProperties);
+			/*if (transcoder.equals("apu")) {	
+				Document sProperties = XMLHelper.asDocument(screenProperties);
 				Node useraw = sProperties.selectSingleNode("//useraw");
 				if (useraw != null) {
 					sProperties.selectSingleNode("//useraw").setText("1");
 				}
-				frameProperties = sProperties.asXML();
-			}
+				screenProperties = sProperties.asXML();
+			}*/
 	
-			logger.debug("redo properties: " + frameProperties);
-			if(!FSXMLRequestHandler.instance().saveFsXml(framesUri, frameProperties, "PUT", true)) {
-				throw new ActionException("Frames properties could not be set");
+			logger.debug("redo properties: " + screenProperties);
+			if(!FSXMLRequestHandler.instance().saveFsXml(screensUri, screenProperties, "PUT", true)) {
+				throw new ActionException("Screens properties could not be set");
 			}else{
-				logger.debug("frames properties were created successfully");
+				logger.debug("screens properties were created successfully");
 			}
 		} catch (Exception e) {
 			logger.error("",e);
 		}	
 		return null;
-	}
-	
+	}	
 }

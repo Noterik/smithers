@@ -1567,6 +1567,8 @@ public class FSXMLRequestHandler {
 				
 				// make sure the URI is linked to its parent
 				addUriToChildrenOfParentResource(uri, type);
+			} else {
+				logger.error("Not adding children to parent resource for "+uri+" "+type);
 			}
 			
 			// send event to triggersystem
