@@ -40,7 +40,7 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 	
 	/** constants */
 	private static final String SCREENS_CONFIG_URI = "/domain/{domain}/config/ingest/setting/screens";
-	private static final String DEFAULT_SCREENS_PROPERTIES = "<fsxml><properties><format>file/mjpeg</format><redo>true</redo></properties></fsxml>";
+	private static final String DEFAULT_SCREENS_PROPERTIES = "<fsxml><properties><format>file/mjpeg</format><redo>true</redo><useraw>original</useraw></properties></fsxml>";
 	
 	@Override
 	public String run() {		
@@ -65,18 +65,12 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 			String vidUri = uri.substring(0, uri.lastIndexOf("/rawvideo"));
 			
 			Document vidDoc = FSXMLRequestHandler.instance().getNodeProperties(vidUri, false);
-			
-			String transcoder = doc.selectSingleNode("//properties/transcoder") == null ? "" : doc.selectSingleNode("//properties/transcoder").getText();
 
-			// work around so we don't need to fix APU
-			if ( !transcoder.equals("apu") ) {
-				// check is screens are already done
-				boolean hasScreens = vidDoc.selectSingleNode(".//screens") != null;
-				if(hasScreens){
-					logger.debug("Screens are already present. No need to set redo to true.");
-					return null;
-				}				
-			}			
+			boolean hasScreens = vidDoc.selectSingleNode(".//screens") != null;
+			if(hasScreens){
+				logger.debug("Screens are already present. No need to set redo to true.");
+				return null;
+			}							
 			
 			logger.debug("Screens properties will be created");
 			// get uri of redo tag
@@ -92,17 +86,7 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 				Node configProperties = configDoc.selectSingleNode("//screensprofile/properties");
 				screenProperties = "<fsxml>"+configProperties.asXML()+"</fsxml>";
 			}
-			
-			//if apu most likely only 1 raw available, always use raw 1 otherwise job might never get executed
-			/*if (transcoder.equals("apu")) {	
-				Document sProperties = XMLHelper.asDocument(screenProperties);
-				Node useraw = sProperties.selectSingleNode("//useraw");
-				if (useraw != null) {
-					sProperties.selectSingleNode("//useraw").setText("1");
-				}
-				screenProperties = sProperties.asXML();
-			}*/
-	
+
 			logger.debug("redo properties: " + screenProperties);
 			if(!FSXMLRequestHandler.instance().saveFsXml(screensUri, screenProperties, "PUT", true)) {
 				throw new ActionException("Screens properties could not be set");
