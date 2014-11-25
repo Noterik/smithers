@@ -50,8 +50,6 @@ public class ResolutionMetaCommand implements Command {
 		if(LazyHomer.isWindows()) {
 			basePath = "c:\\springfield\\smithers\\data\\";
 		}
-		String payload = "<fsxml mimetype=\"application/fscommand\" id=\"dynamic\"><properties><handler>/dynamic/presentation/playout/flash</handler><virtualpath>videoplaylist/resolutiondata</virtualpath></properties><handlerparams><properties><input>run1</input><streams>run1_1</streams><offset>0</offset><startblock>0</startblock><timedelta>50</timedelta><resolution>200</resolution><blockcount>0</blockcount></properties></handlerparams></fsxml>";
-		//LazyHomer.sendRequest("POST",uri,payload,"text/xml");
 		
 		String input = props.getProperty("input");
 		
@@ -60,8 +58,6 @@ public class ResolutionMetaCommand implements Command {
 			metanode = createMeta(input);
 		}
 
-		
-		
 		StringBuffer fsxml = new StringBuffer();
 		fsxml.append("<fsxml>");
 		if(metanode!=null) {
@@ -71,131 +67,6 @@ public class ResolutionMetaCommand implements Command {
 		}
 		fsxml.append("</fsxml>");
 		return fsxml.toString();
-	}
-	
-	private Element createHighSpeedMeta() {
-		
-		String basePath = "/springfield/smithers/data/";
-		if(LazyHomer.isWindows()) {
-			basePath = "c:\\springfield\\smithers\\data\\";
-		}
-		
-		Element metanode = DocumentHelper.createElement("resolutionmeta");
-		
-		// set the id and aim it to our original video
-		metanode.addAttribute("id", "1");
-		
-		// create the properties and set them (this can be done easer?)
-		Element p = DocumentHelper.createElement("properties");
-		Element dataunits = DocumentHelper.createElement("dataunits");
-		
-		String sbfFile = null;
-		String body = "";
-		String sep = "";
-		body += "{";
-		for (highspeed input : highspeed.values()) {
-			switch (input) {
-			case analog:
-				sbfFile = basePath + "9812109________001_014__export_file_set4.sbf";
-				break;
-			case analog2:
-				sbfFile = basePath + "9812109________001_014__export_file_set2.sbf";
-				break;
-			case analog23:
-				sbfFile = basePath + "9812109________001_014__export_file_set3.sbf";
-				break;
-			case analog3:
-				sbfFile = basePath + "9812109________001_014__export_file_set1.sbf";
-				break;
-			case digital:
-				sbfFile = basePath + "9812109________001_014__export_file_set5.sbf";
-				break;
-			}
-			
-			SBFReader sbfr = new SBFReader(sbfFile);
-			SBFile dataFile = sbfr.getDataFile();
-			int cols = (int) dataFile.getColumnCount();
-			
-			for(int i=1; i<cols; i++) {
-				body += sep + "\"" + input + "_" + Integer.toString(i) + "\" : { \"name\" : \"" +  dataFile.getDataColumns(i) + "\", \"unit\" : \"" + dataFile.getUnitColumns(i) + "\"}";
-				sep = ",";
-			}
-			
-			sbfr = null;
-			
-		}
-		
-		body += "}";
-		
-		
-		dataunits.setText(body);
-		p.add(dataunits);
-		metanode.add(p);
-		
-		return metanode;
-	}
-	
-	
-	private Element createHighSpeedFilteredMeta() {
-		
-		String basePath = "/springfield/smithers/data/";
-		if(LazyHomer.isWindows()) {
-			basePath = "c:\\springfield\\smithers\\data\\";
-		}
-		
-		Element metanode = DocumentHelper.createElement("resolutionmeta");
-		
-		// set the id and aim it to our original video
-		metanode.addAttribute("id", "1");
-		
-		// create the properties and set them (this can be done easer?)
-		Element p = DocumentHelper.createElement("properties");
-		Element dataunits = DocumentHelper.createElement("dataunits");
-		
-		String sbfFile = null;
-		String body = "";
-		String sep = "";
-		body += "{";
-		for (highspeedfiltered input : highspeedfiltered.values()) {
-			switch (input) {
-				case analogfiltered:
-					sbfFile = basePath + "9812109________001_014__export_filtered_set4.sbf";
-					break;
-				case analog2filtered:
-					sbfFile = basePath + "9812109________001_014__export_filtered_set2.sbf";
-					break;
-				case analog23filtered:
-					sbfFile = basePath + "9812109________001_014__export_filtered_set3.sbf";
-					break;
-				case analog3filtered:
-					sbfFile = basePath + "9812109________001_014__export_filtered_set1.sbf";
-					break;
-				case digitalfiltered:
-					sbfFile = basePath + "9812109________001_014__export_filtered_set5.sbf";
-					break;
-			}
-			
-			SBFReader sbfr = new SBFReader(sbfFile);
-			SBFile dataFile = sbfr.getDataFile();
-			int cols = (int) dataFile.getColumnCount();
-			
-			for(int i=1; i<cols; i++) {
-				body += sep + "\"" + input + "_" + Integer.toString(i) + "\" : { \"name\" : \"" +  dataFile.getDataColumns(i) + "\", \"unit\" : \"" + dataFile.getUnitColumns(i) + "\"}";
-				sep = ",";
-			}
-			
-			sbfr = null;
-			
-		}
-		
-		body += "}";
-		
-		
-		dataunits.setText(body);
-		p.add(dataunits);
-		metanode.add(p);
-		
-		return metanode;
 	}
 	
 	private Element createMeta(String input) {
@@ -233,7 +104,7 @@ public class ResolutionMetaCommand implements Command {
 		//Element availableinputs = DocumentHelper.createElement("inputs");
 		
 		
-		String body = "";
+		String body = "<![CDATA[";
 		String sep = "";
 		body += "{";
 		for(int i=0; i<metafiles.length; i++) {
@@ -241,11 +112,15 @@ public class ResolutionMetaCommand implements Command {
 			Properties meta = readMetaFile(f);
 			String filename = f.getName();
 			String name = filename.substring(0, filename.lastIndexOf("."));
-			
-			body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\"}";
+			if(meta.getProperty("startmeasurement")!=null) {
+				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
+			} else {
+				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\"}";
+			}
 			sep = ",";
 		}
 		body += "}";
+		body += "]]>";
 		
 
 		
@@ -289,6 +164,10 @@ public class ResolutionMetaCommand implements Command {
 		Properties meta = new Properties();
 		meta.put("name", metaString[3]);
 		meta.put("unit", metaString[4]);
+		if(metaString.length>5) {
+			meta.put("startmeasurement", metaString[5]);
+			meta.put("endmeasurement", metaString[6]);
+		}
 		return meta;
 	}
 	

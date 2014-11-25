@@ -76,7 +76,7 @@ public class MomarQueueAction extends ActionAdapter {
 	
 	@Override
 	public String run() {	
-		if (1==1) return null; // not in use anymore in new momar 
+		//if (1==1) return null; // not in use anymore in new momar 
 		
 		// parse request
 		String requestBody = event.getRequestData();

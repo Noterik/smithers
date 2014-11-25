@@ -178,7 +178,15 @@ public class FlandersAction extends ActionAdapter {
             Element prop = (Element) j.next();
             String name = prop.getName();
             String value = prop.getText();
-            values.put(name, value);
+            
+            //For marin there metadata is leading
+            if (values.containsKey("mount") && values.get("mount").toLowerCase().equals("marin")) {
+            	if (!values.containsKey(name)) {
+            		values.put(name, value);
+            	}
+            } else {
+            	values.put(name, value);
+            }
         }
         
         Element finalEl = DocumentHelper.createElement("fsxml");

@@ -151,4 +151,14 @@
 		<id>alignorder</id>
 		<class>com.noterik.bart.fs.fscommand.OrderCommand</class>
 	</command>
+	<command>
+		<id>resolutiondata</id>
+		<class>com.noterik.bart.fs.fscommand.ResolutionData</class>
+		<jar>marin-addons.jar</jar>
+	</command>
+	<command>
+		<id>processsbf</id>
+		<class>com.noterik.bart.fs.fscommand.ProcessSBF</class>
+		<jar>marin-addons.jar</jar>
+	</command>
 </commands>
