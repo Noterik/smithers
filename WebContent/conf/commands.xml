@@ -161,4 +161,9 @@
 		<class>com.noterik.bart.fs.fscommand.ProcessSBF</class>
 		<jar>marin-addons.jar</jar>
 	</command>
+	<command>
+		<id>datapoints</id>
+		<class>com.noterik.bart.fs.fscommand.RealData</class>
+		<jar>marin-addons.jar</jar>
+	</command>
 </commands>
