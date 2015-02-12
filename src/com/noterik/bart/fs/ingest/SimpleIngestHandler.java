@@ -446,11 +446,7 @@ public class SimpleIngestHandler {
 				if (doc != null) {
 					String properties = doc.asXML();
 					logger.debug("Properties are: " + properties);
-					properties = FlandersHelper.processRaw(iid.getDestinationUri(), properties);
-					logger.debug("Properties are now after flanders: " + properties);
 					if(properties!=null) {
-						// only save when flanders gave meaningful result
-						FSXMLRequestHandler.instance().saveFsXml(iid.getDestinationUri(), properties, "PUT", true);
 						// set status stag to done
 						FSXMLRequestHandler.instance().updateProperty(iid.getDestinationUri()+"/properties/status", "status", "done", "PUT", true);
 					}
