@@ -23,18 +23,15 @@ package com.noterik.bart.fs.fscommand;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.LazyHomer;
-import com.noterik.bart.fs.fscommand.dynamic.playlist.util.SBFReader;
-import com.noterik.bart.fs.fscommand.dynamic.playlist.util.SBFile;
-import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.springfield.tools.XMLHelper;
 
 public class ResolutionMetaCommand implements Command {
@@ -43,13 +40,11 @@ public class ResolutionMetaCommand implements Command {
 	public enum highspeed { analog,analog2,analog23,analog3,digital;}
 	public enum highspeedfiltered { analogfiltered,analog2filtered,analog23filtered,analog3filtered,digitalfiltered;}
 	
+	/**Logger**/
+	private static Logger logger = Logger.getLogger(ResolutionMetaCommand.class);
 	public String execute(String uri, String xml) {
-
+		logger.info("ResolutionMetaCommand.execute(" + uri + ", " + xml + ")");
 		Properties props = getInputParameters(xml);
-		String basePath = "/springfield/smithers/data/";
-		if(LazyHomer.isWindows()) {
-			basePath = "c:\\springfield\\smithers\\data\\";
-		}
 		
 		String input = props.getProperty("input");
 		
@@ -70,14 +65,21 @@ public class ResolutionMetaCommand implements Command {
 	}
 	
 	private Element createMeta(String input) {
+		logger.info("ResolutionMetaCommand.createMeta(" + input + ")");
 		String basePath = "/springfield/smithers/data/";
 		if(LazyHomer.isWindows()) {
 			basePath = "c:\\springfield\\smithers\\data\\";
 		}
 		File srcFolder =  new File(basePath + input);
 		
-		if(!srcFolder.exists()) return null;
-		if(!srcFolder.isDirectory()) return null;
+		if(!srcFolder.exists()){
+			logger.error("folder: " + srcFolder + " does not exist!");
+			return null;
+		}
+		if(!srcFolder.isDirectory()){
+			logger.error("folder: " + srcFolder + " is not a folder!");
+			return null;
+		}
 		
 		File[] metafiles = srcFolder.listFiles(new FilenameFilter() {
 			
@@ -140,6 +142,8 @@ public class ResolutionMetaCommand implements Command {
 		// add the properties to the video node so it plays just that part.
 		metanode.add(p);
 		
+		logger.info("BODY: " + body);
+		
 		return metanode;
 	}
 	
@@ -171,7 +175,7 @@ public class ResolutionMetaCommand implements Command {
 		return meta;
 	}
 	
-	
+	/*
 	private Element createMeta(String sbfFile, inputs input) {
 		SBFReader sbfr = new SBFReader(sbfFile);
 		
@@ -216,7 +220,7 @@ public class ResolutionMetaCommand implements Command {
 		metanode.add(p);
 		
 		return metanode;
-	}
+	}*/
 	
 	public ManualEntry man() {
 		return null;
