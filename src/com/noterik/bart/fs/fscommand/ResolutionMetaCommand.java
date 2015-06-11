@@ -114,10 +114,13 @@ public class ResolutionMetaCommand implements Command {
 			Properties meta = readMetaFile(f);
 			String filename = f.getName();
 			String name = filename.substring(0, filename.lastIndexOf("."));
+			Float min = Float.parseFloat(meta.getProperty("min"));
+			Float max = Float.parseFloat(meta.getProperty("max"));
+			Float multiplier = Float.parseFloat(meta.getProperty("multiplier"));
 			if(meta.getProperty("startmeasurement")!=null) {
-				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
+				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + ", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
 			} else {
-				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\"}";
+				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + "}";
 			}
 			sep = ",";
 		}
@@ -166,6 +169,9 @@ public class ResolutionMetaCommand implements Command {
 		
 		String[] metaString = str.toString().split(",");  
 		Properties meta = new Properties();
+		meta.put("min", metaString[0]);
+		meta.put("max", metaString[1]);
+		meta.put("multiplier", metaString[2]);
 		meta.put("name", metaString[3]);
 		meta.put("unit", metaString[4]);
 		if(metaString.length>5) {
