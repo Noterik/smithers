@@ -127,19 +127,22 @@
 	</target>
 
 	<!-- Jar package build -->
-	<target name="build" depends="compile">
+	<target name="build" depends="compile,buildtime">
+		<loadfile property="time" srcFile="${webcontent.dir}/build.txt"/>
 		<delete file="${package.location.jar}"/>
 		<jar jarfile="${package.location.jar}" basedir="${classes.dir}">
 			<manifest>
 				<attribute name="Built-By" value="Noterik B.V."/>
 			   	<attribute name="Main-Class" value=""/>
+				<attribute name="Build" value="${time}"/>
 			</manifest>
 		</jar>
 	</target>
 
 	<!-- War package build. -->
 	<target name="deploy-war" depends="clean, build">
-        <copy todir="${webcontent.lib.dir}" file="${package.location.jar}" />
+		<loadfile property="time" srcFile="${webcontent.dir}/build.txt"/>
+		<copy todir="${webcontent.lib.dir}" file="${package.location.jar}" />
 		
 		<war destfile="${package.location.war}" webxml="${webcontent.dir}/WEB-INF/web.xml">
 			<fileset dir="${webcontent.dir}">
@@ -164,8 +167,17 @@
 				<exclude name="WEB-INF/lib/google-collect-1.0-rc1.jar"/>
 				<exclude name="WEB-INF/lib/c3p0-0.9.1.2.jar"/>
 			</fileset>
-
+			<manifest>
+				<attribute name="Built-By" value="Noterik B.V."/>
+				<attribute name="Build" value="${time}"/>
+			</manifest>
 		</war>
 	</target>
-
+	
+	<target name="buildtime">
+		<tstamp>
+			<format property="time" pattern="yyyy/MM/dd HH:mm:ss" unit="hour"/>
+		</tstamp>
+		<echo file="${webcontent.dir}/build.txt">${time}</echo>
+	</target>
 </project>
