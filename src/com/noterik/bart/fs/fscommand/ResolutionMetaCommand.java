@@ -43,7 +43,6 @@ public class ResolutionMetaCommand implements Command {
 	/**Logger**/
 	private static Logger logger = Logger.getLogger(ResolutionMetaCommand.class);
 	public String execute(String uri, String xml) {
-		logger.info("ResolutionMetaCommand.execute(" + uri + ", " + xml + ")");
 		Properties props = getInputParameters(xml);
 		
 		String input = props.getProperty("input");
@@ -65,89 +64,88 @@ public class ResolutionMetaCommand implements Command {
 	}
 	
 	private Element createMeta(String input) {
-		logger.info("ResolutionMetaCommand.createMeta(" + input + ")");
-		String basePath = "/springfield/smithers/data/";
-		if(LazyHomer.isWindows()) {
-			basePath = "c:\\springfield\\smithers\\data\\";
-		}
-		File srcFolder =  new File(basePath + input);
-		
-		if(!srcFolder.exists()){
-			logger.error("folder: " + srcFolder + " does not exist!");
-			return null;
-		}
-		if(!srcFolder.isDirectory()){
-			logger.error("folder: " + srcFolder + " is not a folder!");
-			return null;
-		}
-		
-		File[] metafiles = srcFolder.listFiles(new FilenameFilter() {
+		try{
+			String basePath = "/springfield/smithers/data/";
+			if(LazyHomer.isWindows()) {
+				basePath = "c:\\springfield\\smithers\\data\\";
+			}
+			File srcFolder =  new File(basePath + input);
+			if(!srcFolder.exists()){
+				logger.error("folder: " + srcFolder + " does not exist!");
+				return null;
+			}
+			if(!srcFolder.isDirectory()){
+				logger.error("folder: " + srcFolder + " is not a folder!");
+				return null;
+			}
 			
-			public boolean accept(File dir, String name) {
-				if(name.equals(".") || name.equals("..")) {
+			File[] metafiles = srcFolder.listFiles(new FilenameFilter() {
+				
+				public boolean accept(File dir, String name) {
+					if(name.equals(".") || name.equals("..")) {
+						return false;
+					}
+					if(name.toUpperCase().endsWith(".META")) {
+						return true;
+					}
 					return false;
 				}
-				if(name.toUpperCase().endsWith(".META")) {
-					return true;
+			});
+			
+			Element metanode = DocumentHelper.createElement("resolutionmeta");
+			// set the id and aim it to our original video
+			metanode.addAttribute("id", "1");
+			
+			// create the properties and set them (this can be done easer?)
+			Element p = DocumentHelper.createElement("properties");
+			Element dataunits = DocumentHelper.createElement("dataunits");
+			//Element availableinputs = DocumentHelper.createElement("inputs");
+			
+			
+			String body = "<![CDATA[";
+			String sep = "";
+			body += "{";
+			for(int i=0; i<metafiles.length; i++) {
+				File f = metafiles[i];
+				Properties meta = readMetaFile(f);
+				String filename = f.getName();
+				String name = filename.substring(0, filename.lastIndexOf("."));
+				if(!meta.getProperty("min").equals("inf") && !meta.getProperty("max").equals("inf") && !meta.getProperty("multiplier").equals("inf")){
+					Float min = Float.parseFloat(meta.getProperty("min"));
+					Float max = Float.parseFloat(meta.getProperty("max"));
+					Float multiplier = Float.parseFloat(meta.getProperty("multiplier"));
+					if(meta.getProperty("startmeasurement")!=null) {
+						body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + ", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
+					} else {
+						body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + "}";
+					}
+					sep = ",";
 				}
-				return false;
 			}
-		});
-		
-		
-		Element metanode = DocumentHelper.createElement("resolutionmeta");
-		
-		// set the id and aim it to our original video
-		metanode.addAttribute("id", "1");
-		
-		// create the properties and set them (this can be done easer?)
-		Element p = DocumentHelper.createElement("properties");
-		Element dataunits = DocumentHelper.createElement("dataunits");
-		//Element availableinputs = DocumentHelper.createElement("inputs");
-		
-		
-		String body = "<![CDATA[";
-		String sep = "";
-		body += "{";
-		for(int i=0; i<metafiles.length; i++) {
-			File f = metafiles[i];
-			Properties meta = readMetaFile(f);
-			String filename = f.getName();
-			String name = filename.substring(0, filename.lastIndexOf("."));
-			Float min = Float.parseFloat(meta.getProperty("min"));
-			Float max = Float.parseFloat(meta.getProperty("max"));
-			Float multiplier = Float.parseFloat(meta.getProperty("multiplier"));
-			if(meta.getProperty("startmeasurement")!=null) {
-				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + ", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
-			} else {
-				body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"unit\" : \"" + meta.getProperty("unit") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + "}";
+			body += "}";
+			body += "]]>";
+						
+			dataunits.setText(body);
+			
+			body = "";
+			sep = "";
+			for (inputs val : inputs.values()) {
+				body += sep + val;
+				sep = ",";
 			}
-			sep = ",";
+			
+			//availableinputs.setText(body);
+			//p.add(availableinputs);
+			p.add(dataunits);
+			
+			// add the properties to the video node so it plays just that part.
+			metanode.add(p);
+						
+			return metanode;
+		}catch(Exception err){
+			logger.info(err.toString());
+			return null;
 		}
-		body += "}";
-		body += "]]>";
-		
-
-		
-		dataunits.setText(body);
-		
-		body = "";
-		sep = "";
-		for (inputs val : inputs.values()) {
-			body += sep + val;
-			sep = ",";
-		}
-		
-		//availableinputs.setText(body);
-		//p.add(availableinputs);
-		p.add(dataunits);
-		
-		// add the properties to the video node so it plays just that part.
-		metanode.add(p);
-		
-		logger.info("BODY: " + body);
-		
-		return metanode;
 	}
 	
 	private Properties readMetaFile(File file) {
