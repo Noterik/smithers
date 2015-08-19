@@ -27,7 +27,7 @@ import org.springfield.mojo.interfaces.*;
 import com.noterik.bart.fs.fscommand.CommandRequestHandler;
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.bart.fs.script.FSScriptRequestHandler;
-import com.noterik.bart.fs.tools.FSXMLHelper;
+import com.noterik.bart.fs.restlet.tools.FSXMLHelper;
 import com.noterik.bart.fs.type.MimeType;
 
 public class ServiceHandler implements ServiceInterface{

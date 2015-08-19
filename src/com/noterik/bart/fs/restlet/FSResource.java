@@ -38,7 +38,7 @@ import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
 import com.noterik.bart.fs.fsxml.auth.DecisionEngine;
 import com.noterik.bart.fs.fsxml.auth.TicketProxyDecisionEngine;
 import com.noterik.bart.fs.script.FSScriptRequestHandler;
-import com.noterik.bart.fs.tools.FSXMLHelper;
+import com.noterik.bart.fs.restlet.tools.FSXMLHelper;
 import com.noterik.bart.fs.type.MimeType;
 import com.noterik.springfield.tools.XMLHelper;
 import com.noterik.springfield.tools.fs.FSXMLBuilder;

@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import com.noterik.bart.fs.cache.CacheHandler;
-import com.noterik.bart.fs.dao.DAOException;
+import com.noterik.bart.fs.fscommand.dao.DAOException;
 
 /**
  * Decorator for FSXMLChildDAO, that adds a caching functionality. 

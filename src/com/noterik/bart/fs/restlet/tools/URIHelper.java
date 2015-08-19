@@ -28,7 +28,7 @@
  * @version $Id: URIHelper.java,v 1.7 2011-07-01 11:57:41 derk Exp $
  *
  */
-package com.noterik.bart.fs.tools;
+package com.noterik.bart.fs.restlet.tools;
 
 import com.noterik.bart.fs.type.ReferUriType;
 

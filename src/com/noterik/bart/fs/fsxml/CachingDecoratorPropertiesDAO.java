@@ -23,7 +23,7 @@ package com.noterik.bart.fs.fsxml;
 import java.util.List;
 
 import com.noterik.bart.fs.cache.CacheHandler;
-import com.noterik.bart.fs.dao.DAOException;
+import com.noterik.bart.fs.fscommand.dao.DAOException;
 
 /**
  * Decorator for FSXMLPropertiesDAO, that adds a caching functionality

@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Smithers.  If not, see <http://www.gnu.org/licenses/>.
 */
-package com.noterik.bart.fs.dao;
+package com.noterik.bart.fs.fscommand.dao;
 
 import java.io.Serializable;
 

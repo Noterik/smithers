@@ -22,7 +22,7 @@ package com.noterik.bart.fs.fsxml;
 
 import java.util.List;
 
-import com.noterik.bart.fs.dao.GenericDAO;
+import com.noterik.bart.fs.fscommand.dao.GenericDAO;
 
 /**
  * FSXMLProperties DAO interface.

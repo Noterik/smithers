@@ -32,7 +32,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
-import com.noterik.bart.fs.tools.ServiceHelper;
+import com.noterik.bart.fs.restlet.tools.ServiceHelper;
 import com.noterik.bart.marge.model.Service;
 import com.noterik.springfield.tools.HttpHelper;
 import com.noterik.springfield.tools.fs.URIParser;

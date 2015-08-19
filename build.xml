@@ -65,9 +65,6 @@
 			<dependency groupId="commons-net" artifactId="commons-net" version="2.0"/>
 			<dependency groupId="commons-httpclient" artifactId="commons-httpclient" version="3.1"/>
 			<dependency groupId="jaxen" artifactId="jaxen" version="1.1.1"/>
-			<dependency groupId="org.restlet.jee" artifactId="org.restlet" version="2.0.10"/>
-			<dependency groupId="org.restlet.jee" artifactId="org.restlet.ext.xml" version="2.0.10"/>
-			<dependency groupId="org.restlet.jee" artifactId="org.restlet.ext.servlet" version="2.0.10"/>
 			<dependency groupId="net.sf.ehcache" artifactId="ehcache" version="1.4.1"/>
 			<dependency groupId="javax.mail" artifactId="mail" version="1.4.4"/>
 			<dependency groupId="oro" artifactId="oro" version="2.0.8"/>
@@ -151,8 +148,6 @@
 				<exclude name="WEB-INF/lib/jdom-1.0.jar"/>
 				<exclude name="WEB-INF/lib/log4j-1.2.16.jar"/>
 				<exclude name="WEB-INF/lib/jaxen-1.1.1.jar"/>
-				<exclude name="WEB-INF/lib/com.noelios.restlet.ext.servlet_2.4.jar"/>
-				<exclude name="WEB-INF/lib/com.noelios.restlet.jar"/>
 				<exclude name="WEB-INF/lib/org.restlet.jar"/>
 				<exclude name="WEB-INF/lib/xalan-2.6.0.jar"/>
 				<exclude name="WEB-INF/lib/xercesImpl-2.6.2.jar"/>

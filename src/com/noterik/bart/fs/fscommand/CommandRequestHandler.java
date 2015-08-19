@@ -22,7 +22,7 @@ package com.noterik.bart.fs.fscommand;
 
 import org.dom4j.Document;
 
-import com.noterik.bart.fs.tools.FSXMLHelper;
+import com.noterik.bart.fs.restlet.tools.FSXMLHelper;
 import com.noterik.springfield.tools.XMLHelper;
 import com.noterik.springfield.tools.fs.FSXMLBuilder;
 

@@ -18,7 +18,7 @@
 * You should have received a copy of the GNU General Public License
 * along with Smithers.  If not, see <http://www.gnu.org/licenses/>.
 */
-package com.noterik.bart.fs.tools;
+package com.noterik.bart.fs.restlet.tools;
 
 import java.util.Properties;
 

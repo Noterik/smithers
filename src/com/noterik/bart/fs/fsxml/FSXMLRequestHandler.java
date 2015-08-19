@@ -43,12 +43,12 @@ import org.restlet.representation.StringRepresentation;
 
 import com.noterik.bart.fs.GlobalConfig;
 import com.noterik.bart.fs.cache.CacheHandler;
-import com.noterik.bart.fs.dao.DAOException;
+import com.noterik.bart.fs.fscommand.dao.DAOException;
 import com.noterik.bart.fs.fscommand.dynamic.presentation.playout.cache;
 import com.noterik.bart.fs.id.IdHandler;
 import com.noterik.bart.fs.script.FSScript;
-import com.noterik.bart.fs.tools.FSXMLHelper;
-import com.noterik.bart.fs.tools.URIHelper;
+import com.noterik.bart.fs.restlet.tools.FSXMLHelper;
+import com.noterik.bart.fs.restlet.tools.URIHelper;
 import com.noterik.bart.fs.triggering.TriggerSystemManager;
 import com.noterik.bart.fs.type.MimeType;
 import com.noterik.bart.fs.type.ReferUriType;

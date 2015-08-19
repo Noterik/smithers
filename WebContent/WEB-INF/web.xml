@@ -27,21 +27,4 @@
   	<listener>
   		<listener-class>com.noterik.bart.fs.SmithersContextListener</listener-class>
   	</listener>
-	
-	<!-- homer/marge -->
-  	<servlet>
-		<servlet-name>MargeServlet</servlet-name>
-		<servlet-class>org.restlet.ext.servlet.ServerServlet</servlet-class>
-		<!-- Application class name -->
-		<init-param>
-			<param-name>org.restlet.application</param-name>
-			<param-value>com.noterik.bart.marge.restlet.MargeRestletApplication</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>MargeServlet</servlet-name>
-	    <url-pattern>/marge/*</url-pattern>
-	</servlet-mapping>
-
 </web-app>

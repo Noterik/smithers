@@ -31,7 +31,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
-import com.noterik.bart.fs.tools.FSXMLHelper;
+import com.noterik.bart.fs.restlet.tools.FSXMLHelper;
 import com.noterik.springfield.tools.XMLHelper;
 import com.noterik.springfield.tools.fs.FSXMLBuilder;
 import com.noterik.springfield.tools.fs.FSXMLParser;
