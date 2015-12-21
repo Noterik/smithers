@@ -20,11 +20,17 @@
 */
 package com.noterik.bart.fs.restlet;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
+import org.restlet.data.Method;
+import org.restlet.engine.header.Header;
+import org.restlet.engine.header.HeaderConstants;
 import org.restlet.ext.xml.DomRepresentation;
 import org.restlet.representation.Representation;
 import org.restlet.representation.StringRepresentation;
@@ -32,6 +38,7 @@ import org.restlet.resource.Delete;
 import org.restlet.resource.Get;
 import org.restlet.resource.Post;
 import org.restlet.resource.Put;
+import org.restlet.util.Series;
 
 import com.noterik.bart.fs.fscommand.CommandRequestHandler;
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
@@ -72,13 +79,20 @@ public class FSResource extends FSDefaultResource {
 	/** the decision engine */
 	private DecisionEngine decisionEngine;
 	
-	/**
-	 * Called right after constructor of this resource (every request)
-	 */
+	private Set<Method> allowedMethods = new HashSet<Method>();
+	private Set<String> allowedHeaders = new HashSet<String>();
+	
 	@Override
 	public void doInit() {
-		super.doInit();
 		decisionEngine = getDecisionEngine(getResourceUri());
+		
+		allowedMethods.add(Method.GET);
+		allowedMethods.add(Method.POST);
+		allowedMethods.add(Method.PUT);
+		allowedMethods.add(Method.DELETE);
+		allowedMethods.add(Method.OPTIONS);
+		
+		allowedHeaders.add("Content-Type");
 	}
 	
 	// allowed actions: GET, PUT, POST, DELETE
@@ -113,37 +127,38 @@ public class FSResource extends FSDefaultResource {
 	 * Get
 	 */
 	@Get
-	public Representation doGet() {
-		if (httpblocked) return null;
+	public void handleGet() {
+		if (httpblocked) return;
+		
 		logger.debug("GET: "+getResourceUri());
 		Representation rep = null;
+		
 		if (!decisionEngine.decide(getRequest())){
 			String error = FSXMLBuilder.getErrorMessage("403", "Permission denied", "Please log in","http://teamelements.noterik.com/team");
 			rep = new StringRepresentation(error,MediaType.TEXT_XML);
 		} else {
-			String data = getRequestBodyData(getRequest().getEntity());	
+			String data = getRequestBodyData(getRequest().getEntity());
 			rep = FSXMLRequestHandler.instance().handleGET(getResourceUri(),data);
 		}
-		
+
 		//set access control headers to allow cross domain communication
-		Form responseHeaders = (Form) getResponse().getAttributes().get("org.restlet.http.headers");  
-		if (responseHeaders == null)  
-		{  
-			responseHeaders = new Form();  
-			getResponse().getAttributes().put("org.restlet.http.headers", responseHeaders);  
-		}  
-		
+		Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (responseHeaders == null) {
+			responseHeaders = new Series<Header>(Header.class); 
+			getResponse().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, responseHeaders); 
+		}
 		responseHeaders.add("Access-Control-Allow-Origin", "*");  
 		responseHeaders.add("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		responseHeaders.add("Access-Control-Allow-Headers", "Content-Type");
-		return rep;
+		
+		getResponse().setEntity(rep);
 	}
 
 	/**
 	 * Post
 	 */
 	@Post
-	public void doPost(Representation representation) {
+	public void handlePost(Representation representation) {
 		if (httpblocked) return;
 		logger.debug("POST: "+getResourceUri());
 		
@@ -188,15 +203,13 @@ public class FSResource extends FSDefaultResource {
 			getResponse().setEntity(new StringRepresentation(response,MediaType.TEXT_XML));
 		}
 		getResponse().setEntity(dr);
-		
+
 		//set access control headers to allow cross domain communication
-		Form responseHeaders = (Form) getResponse().getAttributes().get("org.restlet.http.headers");  
-		if (responseHeaders == null)  
-		{  
-			responseHeaders = new Form();  
-			getResponse().getAttributes().put("org.restlet.http.headers", responseHeaders);  
-		}  
-				
+		Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (responseHeaders == null) {
+			responseHeaders = new Series<Header>(Header.class); 
+			getResponse().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, responseHeaders); 
+		}
 		responseHeaders.add("Access-Control-Allow-Origin", "*");  
 		responseHeaders.add("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		responseHeaders.add("Access-Control-Allow-Headers", "Content-Type");
@@ -206,7 +219,7 @@ public class FSResource extends FSDefaultResource {
 	 * Put
 	 */
 	@Put
-	public void doPut(Representation representation) {
+	public void handlePut(Representation representation) {
 		if (httpblocked) return;
 		logger.debug("PUT: "+getResourceUri());
 		
@@ -250,13 +263,11 @@ public class FSResource extends FSDefaultResource {
 		getResponse().setEntity(dr);
 		
 		//set access control headers to allow cross domain communication
-		Form responseHeaders = (Form) getResponse().getAttributes().get("org.restlet.http.headers");  
-		if (responseHeaders == null)  
-		{  
-			responseHeaders = new Form();  
-			getResponse().getAttributes().put("org.restlet.http.headers", responseHeaders);  
-		}  
-						
+		Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (responseHeaders == null) {
+			responseHeaders = new Series<Header>(Header.class); 
+			getResponse().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, responseHeaders); 
+		}
 		responseHeaders.add("Access-Control-Allow-Origin", "*");  
 		responseHeaders.add("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		responseHeaders.add("Access-Control-Allow-Headers", "Content-Type");
@@ -266,7 +277,7 @@ public class FSResource extends FSDefaultResource {
 	 * Delete
 	 */
 	@Delete
-	public void doDelete() {
+	public void handleDelete() {
 		if (httpblocked) return;
 		
 		logger.debug("DELETE: "+getResourceUri());
@@ -297,13 +308,11 @@ public class FSResource extends FSDefaultResource {
 		getResponse().setEntity(dr);
 		
 		//set access control headers to allow cross domain communication
-		Form responseHeaders = (Form) getResponse().getAttributes().get("org.restlet.http.headers");  
-		if (responseHeaders == null)  
-		{  
-			responseHeaders = new Form();  
-			getResponse().getAttributes().put("org.restlet.http.headers", responseHeaders);  
-		}  
-						
+		Series<Header> responseHeaders = (Series<Header>) getResponse().getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+		if (responseHeaders == null) {
+			responseHeaders = new Series<Header>(Header.class); 
+			getResponse().getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, responseHeaders); 
+		}
 		responseHeaders.add("Access-Control-Allow-Origin", "*");  
 		responseHeaders.add("Access-Control-Allow-Methods","GET, POST, PUT, DELETE, OPTIONS");
 		responseHeaders.add("Access-Control-Allow-Headers", "Content-Type");

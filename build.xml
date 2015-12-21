@@ -148,6 +148,7 @@
 				<exclude name="WEB-INF/lib/jdom-1.0.jar"/>
 				<exclude name="WEB-INF/lib/log4j-1.2.16.jar"/>
 				<exclude name="WEB-INF/lib/jaxen-1.1.1.jar"/>
+				<exclude name="WEB-INF/lib/javax.servlet.jar"/>
 				<exclude name="WEB-INF/lib/org.restlet.jar"/>
 				<exclude name="WEB-INF/lib/xalan-2.6.0.jar"/>
 				<exclude name="WEB-INF/lib/xercesImpl-2.6.2.jar"/>

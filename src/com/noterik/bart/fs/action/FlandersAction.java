@@ -20,6 +20,7 @@
 */
 package com.noterik.bart.fs.action;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -127,7 +128,7 @@ public class FlandersAction extends ActionAdapter {
 			Node extNode = doc.selectSingleNode("//extension");
 			Node filenameNode = doc.selectSingleNode("//filename");
 			if (filenameNode != null) {
-				String filename = filenameNode.getText();
+				String filename = uri + File.separator + filenameNode.getText();
 				flandersXml = getXmlFromFlandersLocal(filename, mount);
 			} else if(extNode != null) {
 				String extension = extNode.getText();

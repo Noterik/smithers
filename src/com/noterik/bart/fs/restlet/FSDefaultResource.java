@@ -41,6 +41,11 @@ public abstract class FSDefaultResource extends ServerResource {
 		}
 		return uri;
 	}
+	
+	@Override
+	public void doInit() {
+		
+	}
 
 	protected String getRequestBodyData(Representation representation) {
 		String data = null;

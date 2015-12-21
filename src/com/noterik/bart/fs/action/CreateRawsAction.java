@@ -60,7 +60,7 @@ public class CreateRawsAction extends ActionAdapter {
 		String uri = event.getUri();
 		String requestBody = event.getRequestData();
 		logger.debug("\n\nRequest Data: " + requestBody);
-		String mount = null, original = null;
+		String mount = null, original = null, filename = null;
 		Document originalDoc = null;
 		
 		try {
@@ -68,12 +68,13 @@ public class CreateRawsAction extends ActionAdapter {
 				originalDoc = DocumentHelper.parseText(requestBody);
 				Node mountNode = originalDoc.selectSingleNode("//properties/mount");
 				Node originalNode = originalDoc.selectSingleNode("//properties/original");
+				Node filenameNode = originalDoc.selectSingleNode("//properties/filename");
 				Node transcoderNode = originalDoc.selectSingleNode("//properties/transcoder");
 				if(transcoderNode != null && transcoderNode.getText() != null && transcoderNode.getText().equals("apu")){
 					logger.debug("The video was already transcoded by apu, skipping raw2 creation");
 					return null;
 				}
-				
+
 				if (mountNode != null && mountNode.getText() != null) {
 					mount = mountNode.getText();
 					logger.debug("\n\n\n\n\nFOUND MOUNT: " + mount);
@@ -88,6 +89,10 @@ public class CreateRawsAction extends ActionAdapter {
 					logger.debug("\n\n\n\n\nNO ORIGINAL FOUND IN PROPERTIES, WHICH MEANS APU UPLOAD, CREATE ORIGINAL ANYWAYS ;)");
 					createOriginalTagAfterApuUpload();
 					return null;
+				}
+				
+				if (filenameNode != null && filenameNode.getText() != null) {
+					filename = filenameNode.getText();
 				}
 			}
 		} catch (DocumentException e) {
@@ -114,18 +119,18 @@ public class CreateRawsAction extends ActionAdapter {
 			
 			if (FSXMLRequestHandler.instance().getPropertyValue(rawUri+"/reencode") == null && mount != null) {
 			//if (!FSXMLRequestHandler.instance().hasProperties(rawUri) && mount != null) {			
-				createRawProperties(rawUri, mount, profiles.get(id));
+				createRawProperties(rawUri, mount, profiles.get(id), filename);
 			}			
 		}
 		return null;
 	}
 
-	private void createRawProperties(String rawUri, String mount, EncodingProfile ep) {
+	private void createRawProperties(String rawUri, String mount, EncodingProfile ep, String filename) {
 		String domainid = URIParser.getDomainFromUri(rawUri);
 		String userid = URIParser.getUserFromUri(rawUri);
 		String rawVideoId = URIParser.getRawvideoIdFromUri(rawUri);
 		// get the xml for the rawvideo with the encoding profile
-		String xml = getRawXml(ep, mount);
+		String xml = getRawXml(ep, mount, filename);
 		// set the xml to the rawvideo
 		String response = FSXMLRequestHandler.instance().handlePUT(rawUri, xml.toString());
 		logger.debug(response);
@@ -249,7 +254,7 @@ public class CreateRawsAction extends ActionAdapter {
 		}
 	}
 
-	private String getRawXml(EncodingProfile ep, String mount) {
+	private String getRawXml(EncodingProfile ep, String mount, String filename) {
 		StringBuffer xml = new StringBuffer("<fsxml><properties>");
 		xml.append("<reencode>true</reencode>");
 		xml.append("<mount>"+mount+"</mount>");
@@ -263,6 +268,13 @@ public class CreateRawsAction extends ActionAdapter {
 		xml.append("<wantedaudiobitrate>" + ep.getAudioBitRate() + "</wantedaudiobitrate>");
 		if (ep.getBatchFile() != null) {
 			xml.append("<batchfile>"+ep.getBatchFile()+"</batchfile>");
+		}
+		if (ep.getFilename() != null) {
+			if (ep.getFilename().equals("original")) {
+				xml.append("<filename>"+filename+"</filename>");
+			} else {
+				xml.append("<filename>"+ep.getFilename()+"</filename>");
+			}
 		}
 		xml.append("</properties></fsxml>");
 		return xml.toString();
