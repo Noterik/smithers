@@ -110,10 +110,28 @@ public class ResolutionMetaCommand implements Command {
 				Properties meta = readMetaFile(f);
 				String filename = f.getName();
 				String name = filename.substring(0, filename.lastIndexOf("."));
-				if(!meta.getProperty("min").equals("inf") && !meta.getProperty("max").equals("inf") && !meta.getProperty("multiplier").equals("inf")){
-					Float min = Float.parseFloat(meta.getProperty("min"));
-					Float max = Float.parseFloat(meta.getProperty("max"));
-					Float multiplier = Float.parseFloat(meta.getProperty("multiplier"));
+				if(!meta.getProperty("min").equals("inf") && !meta.getProperty("min").equals("-inf") && !meta.getProperty("max").equals("inf") && !meta.getProperty("max").equals("-inf") && !meta.getProperty("multiplier").equals("inf") && !meta.getProperty("multiplier").equals("-inf")){
+					Float min;
+					Float max;
+					Float multiplier;
+					try{
+						min = Float.parseFloat(meta.getProperty("min"));
+					}catch(NumberFormatException nfe){
+						min = 0.0f;
+					}
+					
+					try{
+						max = Float.parseFloat(meta.getProperty("max"));
+					}catch(NumberFormatException nfe){
+						max = 0.0f;
+					}
+					
+					try{
+						multiplier = Float.parseFloat(meta.getProperty("multiplier"));
+					}catch(NumberFormatException nfe){
+						multiplier = 0.0f;
+					}
+					
 					if(meta.getProperty("startmeasurement")!=null) {
 						body += sep + "\"" + name + "\" : { \"name\" : \"" +  meta.getProperty("name") + "\", \"min\" : " + min + ", \"max\" : " + max + ", \"multiplier\" : " + multiplier + ", \"unit\" : \"" + meta.getProperty("unit") + "\", \"startmeasurement\" : \"" + meta.getProperty("startmeasurement") + "\", \"endmeasurement\" : \"" + meta.getProperty("endmeasurement") + "\"}";
 					} else {
