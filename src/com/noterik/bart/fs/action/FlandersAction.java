@@ -128,7 +128,13 @@ public class FlandersAction extends ActionAdapter {
 			Node extNode = doc.selectSingleNode("//extension");
 			Node filenameNode = doc.selectSingleNode("//filename");
 			if (filenameNode != null) {
-				String filename = uri + File.separator + filenameNode.getText();
+				//filename can either contain only filename or full path to file
+				String filename = filenameNode.getText();
+				
+				if (filenameNode.getText().indexOf("/") == -1) {
+					filename = uri + File.separator + filenameNode.getText();
+				}
+
 				flandersXml = getXmlFromFlandersLocal(filename, mount);
 			} else if(extNode != null) {
 				String extension = extNode.getText();

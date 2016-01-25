@@ -98,7 +98,8 @@ public class html5 implements DynamicCommand {
 			if (refer != "") {
 				Document videoXml = FSXMLRequestHandler.instance().getNodeProperties(refer, false);
 				if (videoXml != null) {
-					Node vid = videoXml.selectSingleNode("fsxml/video").detach();
+					Element vid = (Element) videoXml.selectSingleNode("fsxml/video").detach();
+					vid.addAttribute("fullid", refer);
 					fsxml.add(vid);
 				}
 			}
