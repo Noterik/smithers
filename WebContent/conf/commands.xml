@@ -126,6 +126,7 @@
 	<command>
 		<id>resolutionmeta</id>
 		<class>com.noterik.bart.fs.fscommand.ResolutionMetaCommand</class>
+		<jar>marin-addons.jar</jar>
 	</command>
 	<command>
 		<id>export</id>
