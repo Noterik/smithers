@@ -64,10 +64,17 @@ public class TimerCondition extends TimerTask implements Condition {
 	public void run() {
 		for(Action action : actions) {
 			logger.debug("running action: " + action.toString());
-			//as actions are initiated by a timer provide empty triggerevent
-			TriggerEvent triggerEvent = new TriggerEvent(null, null, null, null);
-			action.setTriggerEvent(triggerEvent);
-			action.run();
+			try {
+				//as actions are initiated by a timer provide empty triggerevent
+				TriggerEvent triggerEvent = new TriggerEvent(null, null, null, null);
+				action.setTriggerEvent(triggerEvent);
+				action.run();
+			} catch (RuntimeException e) {
+				logger.error("Uncaught runtime exception ",e);
+				return;
+			} catch (Throwable e) {
+				logger.error("Unrecoverable error",e);
+			}
 		}
 	}
 	
