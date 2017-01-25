@@ -59,7 +59,12 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 			if(mtNode == null){
 				logger.debug("Mounts are not set, redo will not be set to true");
 				return null;
+			} else if (mtNode.getText().equals("communications")) {
+			    logger.debug("No mjpeg for communications anymore");
+			    return null;
 			}
+			
+			logger.debug("Mount = "+mtNode.getText());
 			
 			// get uri and properties of video
 			String vidUri = uri.substring(0, uri.lastIndexOf("/rawvideo"));

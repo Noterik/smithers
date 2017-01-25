@@ -80,8 +80,10 @@ public class C3P0ConnectionHandler extends ConnectionHandler {
 		// the settings below are optional -- c3p0 can work with defaults 
 		cpds.setMinPoolSize(5); 
 		cpds.setAcquireIncrement(5);
-		cpds.setMaxIdleTimeExcessConnections(2*60*60*1000);
+		cpds.setMaxIdleTimeExcessConnections(2*60*60*1000);	// 2 hours
 		cpds.setMaxPoolSize(GlobalConfig.instance().getMaxNumDbConnections());
+		cpds.setUnreturnedConnectionTimeout(90*1000); // 1,5 minute
+		cpds.setDebugUnreturnedConnectionStackTraces(true);
 	}
 
 	@Override

@@ -190,6 +190,9 @@ public class FlandersAction extends ActionAdapter {
             if (values.containsKey("mount") && values.get("mount").toLowerCase().equals("marin")) {
             	if (!values.containsKey(name)) {
             		values.put(name, value);
+            	} else if (values.get(name).toLowerCase().equals("")) {
+            	    //empty value, so fill
+            	    values.put(name, value);
             	}
             } else {
             	values.put(name, value);
