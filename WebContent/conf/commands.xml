@@ -172,4 +172,9 @@
 		<class>com.noterik.bart.fs.fscommand.QuickResolutionData</class>
 		<jar>marin-addons.jar</jar>
 	</command>
+	<command>
+		<id>hdf5quickresolutiondata</id>
+		<class>com.noterik.bart.fs.fscommand.Hdf5QuickResolutionData</class>
+		<jar>marin-addons.jar</jar>
+	</command>
 </commands>
