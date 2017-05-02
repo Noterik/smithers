@@ -40,7 +40,7 @@ import com.noterik.springfield.tools.fs.model.config.ingest.IngestConfig;
 import com.noterik.springfield.tools.fs.model.config.ingest.VideoProfile;
 
 /**
- * Action to create all rawvideos when rawvideo/1 is ingested
+ * Action to create all rawitems when raw<item>/1 is ingested
  * 
  * @author Pieter van Leeuwen <p.vanleeuwen@noterik.nl>
  * @copyright Copyright: Noterik B.V. 2010
@@ -71,7 +71,7 @@ public class CreateRawsAction extends ActionAdapter {
 				Node filenameNode = originalDoc.selectSingleNode("//properties/filename");
 				Node transcoderNode = originalDoc.selectSingleNode("//properties/transcoder");
 				if(transcoderNode != null && transcoderNode.getText() != null && transcoderNode.getText().equals("apu")){
-					logger.debug("The video was already transcoded by apu, skipping raw2 creation");
+					logger.debug("The item was already transcoded by apu, skipping raw2 creation");
 					return null;
 				}
 
@@ -99,8 +99,13 @@ public class CreateRawsAction extends ActionAdapter {
 			logger.error("",e);
 		}
 		
+		String type = "video";
+		if (uri.indexOf("/audio/") > -1) {
+		    type = "audio";
+		}
+		
 		//get config and number of raws to work on
-		Map<String, EncodingProfile> profiles = getConfigs(uri);
+		Map<String, EncodingProfile> profiles = getConfigs(uri, type);
 		String[] ids = new String[profiles.size()];
 		logger.debug("number of profiles = "+profiles.size());
 		int h = 0; 
@@ -114,35 +119,39 @@ public class CreateRawsAction extends ActionAdapter {
 		
 		for (int j = 0; j < ids.length; j++) {		
 			String id = ids[j];
-			logger.debug("found video config "+id);			
+			logger.debug("found item config "+id);			
 			String rawUri = uri.substring(0, uri.lastIndexOf("/")) +"/"+ id+"/properties";
 			
 			if (FSXMLRequestHandler.instance().getPropertyValue(rawUri+"/reencode") == null && mount != null) {
 			//if (!FSXMLRequestHandler.instance().hasProperties(rawUri) && mount != null) {			
-				createRawProperties(rawUri, mount, profiles.get(id), filename);
+				createRawProperties(rawUri, mount, profiles.get(id), filename, type);
 			}			
 		}
 		return null;
 	}
 
-	private void createRawProperties(String rawUri, String mount, EncodingProfile ep, String filename) {
+	private void createRawProperties(String rawUri, String mount, EncodingProfile ep, String filename, String type) {
 		String domainid = URIParser.getDomainFromUri(rawUri);
 		String userid = URIParser.getUserFromUri(rawUri);
-		String rawVideoId = URIParser.getRawvideoIdFromUri(rawUri);
-		// get the xml for the rawvideo with the encoding profile
+		String rawItemId = URIParser.getRawvideoIdFromUri(rawUri);
+		if (type.equals("audio")) {
+		    rawItemId = URIParser.getRawaudioIdFromUri(rawUri);
+		}
+		
+		// get the xml for the raw item with the encoding profile
 		String xml = getRawXml(ep, mount, filename);
-		// set the xml to the rawvideo
+		// set the xml to the raw item
 		String response = FSXMLRequestHandler.instance().handlePUT(rawUri, xml.toString());
 		logger.debug(response);
 		//Get sponsor from encoding profile
-		String videoUri = getSubUri(rawUri,6);
+		String itemUri = getSubUri(rawUri,6);
 		String sponsor = "", presentationURI = "", sponsorURI = "";
 		sponsor = ep.getSponsor();
 		
-		List<String> refers = FSXMLRequestHandler.instance().getReferParents(videoUri);
+		List<String> refers = FSXMLRequestHandler.instance().getReferParents(itemUri);
 		int timeout = 0;
 		while(refers.size()==0) {
-			refers = FSXMLRequestHandler.instance().getReferParents(videoUri);
+			refers = FSXMLRequestHandler.instance().getReferParents(itemUri);
 			try {
 				Thread.currentThread().sleep(500);
 			} catch (InterruptedException e) {
@@ -167,29 +176,29 @@ public class CreateRawsAction extends ActionAdapter {
 		}
 		
 		logger.debug("sponsor = "+sponsor);
-		logger.debug("rawvideoId = "+rawVideoId);
+		logger.debug("raw item Id = "+rawItemId);
 		
-		//Create the sponsor reference only for the first rawvideo being created (in this case 2)
-		if(sponsor != null && !sponsor.equals("") && rawVideoId.equals("2")) { //There is a sponsor set for this user
+		//Create the sponsor reference only for the first raw item being created (in this case 2)
+		if(sponsor != null && !sponsor.equals("") && rawItemId.equals("2")) { //There is a sponsor set for this user
 			//Check if the sponsor user exists
 			Boolean exists = FSXMLRequestHandler.instance().hasProperties(sponsor);
 			logger.debug("exists ? "+exists.toString());
 			if(exists) {
-				//Sponsor exists so just add a link to this video
-				String ref_videoUri = videoUri;
-				logger.debug(ref_videoUri);
+				//Sponsor exists so just add a link to this item
+				String ref_itemUri = itemUri;
+				logger.debug(ref_itemUri);
 				
-				StringBuffer sponsorVideo = new StringBuffer("<fsxml><attributes>");
-				sponsorVideo.append("<referid>"+ref_videoUri+"</referid>");						  
-				sponsorVideo.append("</attributes></fsxml>");
-				Boolean hasVideos = FSXMLRequestHandler.instance().hasProperties(sponsor + "/sponsor/1");
-				if(!hasVideos) {
+				StringBuffer sponsorItem = new StringBuffer("<fsxml><attributes>");
+				sponsorItem.append("<referid>"+ref_itemUri+"</referid>");						  
+				sponsorItem.append("</attributes></fsxml>");
+				Boolean hasItems = FSXMLRequestHandler.instance().hasProperties(sponsor + "/sponsor/1");
+				if(!hasItems) {
 					//Create the <sponsor> tag for the user
 					response = FSXMLRequestHandler.instance().handlePUT(sponsor + "/sponsor/1/properties", "<fsxml><properties/></fsxml>");
-					logger.debug("User: " + sponsor + " does not have sponsoring videos - create the sponsor tag");
+					logger.debug("User: " + sponsor + " does not have sponsoring items - create the sponsor tag");
 				}
-				//Create the reference to the video in the sponsor
-				response = FSXMLRequestHandler.instance().handlePOST(sponsor + "/sponsor/1/video", sponsorVideo.toString());
+				//Create the reference to the item in the sponsor
+				response = FSXMLRequestHandler.instance().handlePOST(sponsor + "/sponsor/1/"+type, sponsorItem.toString());
 				logger.debug(response);
 			}
 		}
@@ -197,16 +206,16 @@ public class CreateRawsAction extends ActionAdapter {
 		logger.debug(response);
 	}
 	
-	private Map<String, EncodingProfile> getConfigs(String uri) {
+	private Map<String, EncodingProfile> getConfigs(String uri, String type) {
 		// get the ingest config
 		String domainid = URIParser.getDomainFromUri(uri);
 		String userid = URIParser.getUserFromUri(uri);
 		Document doc;
 		
 		// Check for ingest configuration in this order: collection, user, domain, sn domain (for historical reasons)
-		String videoUri = getSubUri(uri,6);
+		String itemUri = getSubUri(uri,6);
 		// Get the correct collection
-		String collectionUri = getCollection(videoUri, userid);
+		String collectionUri = getCollection(itemUri, userid);
 		
 		Document collectionConfig = FSXMLRequestHandler.instance().getNodeProperties(collectionUri+"config/ingest", false);
 		if (collectionConfig != null) {
@@ -235,11 +244,20 @@ public class CreateRawsAction extends ActionAdapter {
 			String confXml = doc.asXML();
 			IngestConfig ic = FSXMLParser.getIngestConfigFromXml(confXml);
 			
-			for(Iterator i = ic.getVideoSettings().getRawVideos().keySet().iterator();i.hasNext();) {
-				String next = (String) i.next();
-				EncodingProfile ep = ic.getVideoSettings().getRawVideos().get(next).getEncodingProfile();
-				
-				profiles.put(next, ep);				
+			if (type.equals("audio")) {			    
+			    for(Iterator i = ic.getAudioSettings().getRawAudios().keySet().iterator();i.hasNext();) {
+        			String next = (String) i.next();
+        			EncodingProfile ep = ic.getAudioSettings().getRawAudios().get(next).getEncodingProfile();
+        			
+        			profiles.put(next, ep);				
+			    }			    
+			} else {			
+			    for(Iterator i = ic.getVideoSettings().getRawVideos().keySet().iterator();i.hasNext();) {
+        			String next = (String) i.next();
+        			EncodingProfile ep = ic.getVideoSettings().getRawVideos().get(next).getEncodingProfile();
+        			
+        			profiles.put(next, ep);				
+			    }
 			}
 		}		
 		return profiles;
@@ -247,7 +265,7 @@ public class CreateRawsAction extends ActionAdapter {
 	
 	private void createOriginalTagAfterApuUpload() {
 		String eventURI = event.getUri();
-		if(eventURI.contains("/rawvideo/1")) {
+		if(eventURI.contains("/rawvideo/1") || eventURI.contains("/rawaudio/1")) {
 			FSXMLRequestHandler.instance().updateProperty(eventURI + "/properties/original", "original", "true", "PUT", true);
 		} else {
 			logger.debug("you shouldn't see me");
@@ -260,12 +278,22 @@ public class CreateRawsAction extends ActionAdapter {
 		xml.append("<mount>"+mount+"</mount>");
 		xml.append("<format>" + ep.getFormat() + "</format>");
 		xml.append("<extension>" + ep.getExtension() + "</extension>");
-		xml.append("<wantedwidth>" + ep.getWidth() + "</wantedwidth>");
-		xml.append("<wantedheight>" + ep.getHeight() + "</wantedheight>");
 		xml.append("<wantedbitrate>" + ep.getBitRate() + "</wantedbitrate>");
-		xml.append("<wantedframerate>" + ep.getFrameRate() + "</wantedframerate>");
-		xml.append("<wantedkeyframerate>" + ep.getKeyFrameRate() + "</wantedkeyframerate>");
-		xml.append("<wantedaudiobitrate>" + ep.getAudioBitRate() + "</wantedaudiobitrate>");
+		if (ep.getWidth() != null) {
+		    xml.append("<wantedwidth>" + ep.getWidth() + "</wantedwidth>");
+		}
+		if (ep.getHeight() != null) {
+		    xml.append("<wantedheight>" + ep.getHeight() + "</wantedheight>");
+		}		
+		if (ep.getFrameRate() != null) {
+		    xml.append("<wantedframerate>" + ep.getFrameRate() + "</wantedframerate>");
+		}
+		if (ep.getKeyFrameRate() != null) {
+		    xml.append("<wantedkeyframerate>" + ep.getKeyFrameRate() + "</wantedkeyframerate>");
+		}
+		if (ep.getAudioBitRate() != null) {
+		    xml.append("<wantedaudiobitrate>" + ep.getAudioBitRate() + "</wantedaudiobitrate>");
+		}
 		if (ep.getBatchFile() != null) {
 			xml.append("<batchfile>"+ep.getBatchFile()+"</batchfile>");
 		}
@@ -301,7 +329,7 @@ public class CreateRawsAction extends ActionAdapter {
 		return subUri.substring(0, subUri.length()-1);
 	}
 	
-	/* Get collection for video */
+	/* Get collection for item */
 	private String getCollection(String vUri, String userid) {
 		List<String> refers = FSXMLRequestHandler.instance().getReferParents(vUri);
 		String refer = "";
