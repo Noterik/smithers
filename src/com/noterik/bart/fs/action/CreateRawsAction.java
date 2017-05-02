@@ -299,6 +299,12 @@ public class CreateRawsAction extends ActionAdapter {
 		}
 		if (ep.getFilename() != null) {
 			if (ep.getFilename().equals("original")) {
+			    	if (filename.indexOf(".") > -1) {
+			    	    //replace extension
+			    	    filename = filename.substring(0, filename.lastIndexOf("."));
+			    	}
+			    	filename = filename +"."+ep.getExtension();
+			    	
 				xml.append("<filename>"+filename+"</filename>");
 			} else {
 				xml.append("<filename>"+ep.getFilename()+"</filename>");
