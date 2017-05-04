@@ -65,6 +65,7 @@ public class html5 implements DynamicCommand {
 		if (presentationXml != null) {
 			fsxml.add(presentationXml);
 			addVideos(presentationXml);
+			addAudios(presentationXml);
 		}		
 		
 		return fsxml.asXML();
@@ -99,6 +100,24 @@ public class html5 implements DynamicCommand {
 				Document videoXml = FSXMLRequestHandler.instance().getNodeProperties(refer, false);
 				if (videoXml != null) {
 					Element vid = (Element) videoXml.selectSingleNode("fsxml/video").detach();
+					vid.addAttribute("fullid", refer);
+					fsxml.add(vid);
+				}
+			}
+		}
+	}
+	
+	private void addAudios(Node presentationNode) {	
+		List<Node> audios = presentationNode.selectNodes("//videoplaylist/audio");
+		
+		for(Iterator<Node> iter = audios.iterator(); iter.hasNext(); ) {
+			Element audio = (Element) iter.next();
+			
+			String refer = audio.selectSingleNode("@referid") == null ? "" : audio.selectSingleNode("@referid").getText(); 
+			if (refer != "") {
+				Document audioXml = FSXMLRequestHandler.instance().getNodeProperties(refer, false);
+				if (audioXml != null) {
+					Element vid = (Element) audioXml.selectSingleNode("fsxml/audio").detach();
 					vid.addAttribute("fullid", refer);
 					fsxml.add(vid);
 				}
