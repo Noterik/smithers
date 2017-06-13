@@ -57,8 +57,12 @@ public class ActionClassLoader extends ClassLoader {
 			this.jarFile = jarFile;
 		} else {
 			//assume jar will be in the systems default dir
-			//TODO: make this configurable and windows compatible
+		    String os = System.getProperty("os.name").toLowerCase();
+		    if (os.indexOf("win") >= 0) {
+			this.jarFile = "c:\\springfield\\smithers\\jars\\"+jarFile;
+		    } else {
 			this.jarFile = "/springfield/smithers/jars/"+jarFile;
+		    }
 		}
 	}
 	
