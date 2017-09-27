@@ -110,10 +110,10 @@ public class CreateRawsMarinAction extends ActionAdapter {
 		    
 		    //temp disable mp4 processing for non communication (mediamix) items
 		    //this due to issue with vsync and interlaced videos
-		    if (!mount.toLowerCase().equals("communications")) {
+		    /*if (!mount.toLowerCase().equals("communications")) {
 			logger.debug("No mp4 yet for mediamix items");
 			return null;
-		    }
+		    }*/
 		    
 		} else {
 		    logger.debug("no mount found");
@@ -130,9 +130,9 @@ public class CreateRawsMarinAction extends ActionAdapter {
 	    String newFilename = "";
 	    
 	    if (filename.lastIndexOf(".") > 0) {
-		newFilename = filename.substring(0, filename.lastIndexOf("."))+"_transcode.mp4";
+		newFilename = filename.substring(0, filename.lastIndexOf("."))+".mp4";
 	    } else {
-		newFilename = filename + "_transcode.mp4";
+		newFilename = filename + ".mp4";
 	    }
 	    
 	    //Does not apply for Communications workspace
