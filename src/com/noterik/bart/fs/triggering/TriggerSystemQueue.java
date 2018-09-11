@@ -96,13 +96,14 @@ public class TriggerSystemQueue extends Observable implements Observer, Runnable
 			}
 		}
 		
-		logger.debug("Stopping Trigger System Queue");
+		logger.info("Stopping Trigger System Queue");
 	}
 
 	/**
 	 * Stop this Queue from running
 	 */
 	public void stopThread() {
+	    	logger.info("Stopping thread for "+this.method+" queue because a shutdownhook was activated");
 		stopped = true;
 	}
 	

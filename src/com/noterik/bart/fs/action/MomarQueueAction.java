@@ -20,10 +20,14 @@
 */
 package com.noterik.bart.fs.action;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
@@ -116,6 +120,23 @@ public class MomarQueueAction extends ActionAdapter {
 				logger.debug("high priority queue available");
 				queueUri = QUEUE_URI.replace("{domainid}", domainid).replace("{queueid}",HIGH);
 			}			
+		}
+		
+		Document queue = FSXMLRequestHandler.instance().getNodePropertiesByType(queueUri);
+		List<Node> jobs = queue.selectNodes("//job");
+		
+		for (Iterator<Node> i = jobs.iterator(); i.hasNext(); ) {
+			Element job = (Element) i.next();
+			Node rawvideo = job.selectSingleNode("rawvideo");
+			
+			if (rawvideo == null) {
+				continue;
+			}
+			
+			if (rawvideo.valueOf("@referid").equals(uri)) {
+				logger.info("Video already in queue, skipping "+uri);
+				return;
+			}	
 		}
 		
 		// build xml

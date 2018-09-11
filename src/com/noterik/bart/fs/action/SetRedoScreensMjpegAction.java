@@ -20,20 +20,18 @@
 */
 package com.noterik.bart.fs.action;
 
-import java.util.ArrayList;
-
 import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 
 import com.noterik.bart.fs.fsxml.FSXMLRequestHandler;
-import com.noterik.springfield.tools.XMLHelper;
 import com.noterik.springfield.tools.fs.URIParser;
 
 public class SetRedoScreensMjpegAction extends ActionAdapter {
 	/**	serialVersionUID */
 	private static final long serialVersionUID = 1L;
+	private static int MAX_RETRIES = 3;
 	
 	/** the SetRedoScreensMjpegAction's log4j Logger */
 	private static Logger logger = Logger.getLogger(SetRedoScreensMjpegAction.class);
@@ -41,6 +39,7 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 	/** constants */
 	private static final String SCREENS_CONFIG_URI = "/domain/{domain}/config/ingest/setting/screens";
 	private static final String DEFAULT_SCREENS_PROPERTIES = "<fsxml><properties><format>file/mjpeg</format><redo>true</redo><useraw>original</useraw></properties></fsxml>";
+
 	
 	@Override
 	public String run() {		
@@ -69,8 +68,26 @@ public class SetRedoScreensMjpegAction extends ActionAdapter {
 			// get uri and properties of video
 			String vidUri = uri.substring(0, uri.lastIndexOf("/rawvideo"));
 			
+			int retries = 0;
+			
 			Document vidDoc = FSXMLRequestHandler.instance().getNodeProperties(vidUri, false);
-
+			
+			while (retries < MAX_RETRIES) {
+			    vidDoc = FSXMLRequestHandler.instance().getNodeProperties(vidUri, false);
+			    if (vidDoc == null) {
+				retries++;
+				logger.error("No video found: "+vidUri+" (triggered from "+uri+") retrying "+retries);
+				Thread.sleep(200);
+			    } else {
+				break;
+			    }
+			}
+			
+			if (vidDoc == null) {
+			    logger.error("No video found: "+vidUri+" (triggered from "+uri+") stopping");
+			    return null;
+			}
+				
 			boolean hasScreens = vidDoc.selectSingleNode(".//screens") != null;
 			if(hasScreens){
 				logger.debug("Screens are already present. No need to set redo to true.");

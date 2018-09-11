@@ -73,8 +73,11 @@ public class FlandersAction extends ActionAdapter {
 				return null;
 			} else {
 				logger.debug("Sending request to flanders ("+requestUri+")");
-				String newProperties = processRaw(requestUri, requestBody);
-				FSXMLRequestHandler.instance().saveFsXml(requestUri, newProperties, "PUT", true);
+				String newProperties = processRaw(requestUri, requestBody, requestUri);
+				
+				if (newProperties != null) {				
+					FSXMLRequestHandler.instance().saveFsXml(requestUri, newProperties, "PUT", true);
+				}
 			}
 		} catch (Exception e) {
 			logger.error("Could not parse request data");
@@ -83,7 +86,7 @@ public class FlandersAction extends ActionAdapter {
 		return null;
 	}
 	
-	private String processRaw(String uri, String xml) {
+	private String processRaw(String uri, String xml, String requestUri) {
 		// parse document
 		Document doc = null;
 		try {
@@ -147,11 +150,12 @@ public class FlandersAction extends ActionAdapter {
 		}
 				
 		logger.debug("FLANDERS XML: " + flandersXml);
-		xml = processXml(xml, flandersXml);
+		xml = processXml(xml, flandersXml, requestUri);
+		
 		return xml;
 	}
 	
-	private String processXml(String original, String flanders){
+	private String processXml(String original, String flanders, String requestUri){
 		String xml = "";
 		
 		Map<String, String> values = new HashMap<String, String>();
@@ -164,6 +168,8 @@ public class FlandersAction extends ActionAdapter {
 			flandoc = DocumentHelper.parseText(flanders);
 		} catch (DocumentException e) {
 			logger.error("",e);
+			FSXMLRequestHandler.instance().saveFsXml(requestUri+"/properties/status", "failed", "PUT", true);
+			return null;
 		}
 				
 		Element origProp = (Element)origdoc.selectSingleNode("//properties");
@@ -188,7 +194,10 @@ public class FlandersAction extends ActionAdapter {
             
             //For marin there metadata is leading
             if (values.containsKey("mount") && values.get("mount").toLowerCase().equals("marin")) {
-            	if (!values.containsKey(name)) {
+            	//only trust noterik for width / height, due to IDT highspeed rotation bug
+            	if (name.equals("width") || name.equals("height")) {
+            		values.put(name, value);
+            	} else if (!values.containsKey(name)) {
             		values.put(name, value);
             	} else if (values.get(name).toLowerCase().equals("")) {
             	    //empty value, so fill
