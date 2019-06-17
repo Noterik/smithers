@@ -652,6 +652,7 @@ public class FSXMLRequestHandler {
 		return saveProperty(uri, value, method, property, true);
 	}
 	protected String saveProperty(String uri, String value, String method, String property, boolean sendEvent) {
+		logger.debug("save property value "+value);
 		if (XMLHelper.isXml(value)) {
 			return FSXMLBuilder.getErrorMessage("400", "You are not allowed to send fsxml data to this resource",
 					"This is a single property resource, please just send a single value",
@@ -1119,6 +1120,7 @@ public class FSXMLRequestHandler {
 		 */
 		private synchronized void updateProperty(String uri, String property, String value, String method,
 				boolean sendEvent) {
+			logger.debug("update property "+property+" value "+value);
 			String newXml = "", oldXml = "", referid;
 			String parentUri = uri.substring(0, uri.lastIndexOf("/properties"));
 			//System.out.println("UPDATE URL="+uri);
@@ -1150,6 +1152,7 @@ public class FSXMLRequestHandler {
 				} else {
 					if (hasProperty(uri)) {
 						newXml = setPropertyValue(oldXml, property, value);
+						logger.debug("new xml = "+newXml);
 					} else {
 						// not sure why this can happen. probably when a video is created using only a referid
 						String tmpXml = oldXml;
@@ -1305,7 +1308,6 @@ public class FSXMLRequestHandler {
 				} else {
 					// remove property from xml
 					newXml = removePropertyValue(oldXml, property);
-
 					// try update
 					updated = updateConcurrentProperties(parentUri, referid, newXml, oldXml);
 				}

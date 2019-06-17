@@ -81,6 +81,8 @@ public class FlandersAction extends ActionAdapter {
 			}
 		} catch (Exception e) {
 			logger.error("Could not parse request data");
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		
 		return null;
@@ -171,6 +173,14 @@ public class FlandersAction extends ActionAdapter {
 			FSXMLRequestHandler.instance().saveFsXml(requestUri+"/properties/status", "failed", "PUT", true);
 			return null;
 		}
+		
+		
+		/*Element flandersRoot = flandoc.getRootElement();
+		String idValue = flandersRoot.attributeValue("id");
+		
+		if (idValue.equals("500")) {
+			
+		}*/
 				
 		Element origProp = (Element)origdoc.selectSingleNode("//properties");
         Iterator i = origProp.elementIterator(); 

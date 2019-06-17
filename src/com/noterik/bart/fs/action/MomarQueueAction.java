@@ -84,12 +84,17 @@ public class MomarQueueAction extends ActionAdapter {
 		String requestBody = event.getRequestData();
 		try {
 			Document doc = DocumentHelper.parseText(requestBody);
-			Node node = doc.selectSingleNode("//properties/reencode");
-			if(node==null || !node.getText().toLowerCase().equals(DO_REENCODE)) {
+			Node reencode = doc.selectSingleNode("//properties/reencode");
+			Node priority = doc.selectSingleNode("//properties/priority");
+			if(priority != null && priority.getText().toLowerCase().equals(HIGH)) {
+				queueid = HIGH;
+			}
+			
+			if(reencode==null || !reencode.getText().toLowerCase().equals(DO_REENCODE)) {
 				logger.debug("Not reencoding");
 				return null;
 			} else {
-				putInQueue();
+				putInQueue(queueid);
 			}
 		} catch (Exception e) {
 			logger.error(e);
@@ -100,9 +105,9 @@ public class MomarQueueAction extends ActionAdapter {
 	
 	/**
 	 * Put the job in the queue
-	 */
-	private void putInQueue() {
-		// TODO: get queueid
+	 */		
+	private void putInQueue(String queueid) {
+		// get queueid
 		// get domainid
 		String uri = event.getUri();
 		domainid = URIParser.getDomainFromUri(uri);

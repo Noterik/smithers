@@ -58,7 +58,8 @@ public class CreateRawsMarinAction extends ActionAdapter {
 
 	@Override
 	public String run() {
-	    String uri = event.getUri();
+		logger.debug("Running CreateRawsMarinAction");
+		String uri = event.getUri();
 	    String requestBody = event.getRequestData();
 	    String mount = null, original = null, filename = null;
 	    Document originalDoc = null;
@@ -78,35 +79,41 @@ public class CreateRawsMarinAction extends ActionAdapter {
 	    String videoName = videouri.substring(videouri.lastIndexOf("/")+1);
 	    logger.debug("video name = "+videoName);
 	    
+	    //first sleep a bit so we are sure we have don't act too quickly
 	    try {
+		    Thread.currentThread().sleep(500);
+		} catch (InterruptedException e) {
+		    logger.error("",e);
+		}
 	    
-        	    int retries = 0;
+	    try {	    
+	    	int retries = 0;
         	    
-        	    //Check parent video to retrieve all rawvideos to check if MP4 already exists
-        	    Document videoDocument = FSXMLRequestHandler.instance().getNodeProperties(videouri, false);
+        	//Check parent video to retrieve all rawvideos to check if MP4 already exists
+	    	Document videoDocument = FSXMLRequestHandler.instance().getNodeProperties(videouri, false);
         
-        	    while (retries < MAX_RETRIES) {
+        	while (retries < MAX_RETRIES) {
         		videoDocument = FSXMLRequestHandler.instance().getNodeProperties(videouri, false);
-        		
-        		if (videoDocument == null) {
-        		    retries++;
-        		    logger.error("No video found: "+videouri+" (triggered from "+uri+") retrying "+retries);
-        		    Thread.sleep(200);
-        		} else {
-        		    break;
-        		}
-        	    }
+	        		
+	        	if (videoDocument == null) {
+	        	    retries++;
+	        	    logger.error("No video found: "+videouri+" (triggered from "+uri+") retrying "+retries);
+	        	    Thread.sleep(500);
+	        	} else {
+	        	    break;
+	        	}
+        	}
         	    
-        	    if (videoDocument == null) {
+        	if (videoDocument == null) {
         		logger.error("No video found: "+videouri+" (triggered from "+uri+") stopping");
         		return null;
-        	    }
+        	}
         	    
-        	    List<Node> rawvideos = videoDocument.selectNodes("//rawvideo");
-        	    Node originalRaw = null;
-        	    boolean mp4Found = false;
+        	List<Node> rawvideos = videoDocument.selectNodes("//rawvideo");
+        	Node originalRaw = null;
+        	boolean mp4Found = false;
         	    
-        	    for (Iterator<Node> iter = rawvideos.iterator(); iter.hasNext(); ) {
+        	for (Iterator<Node> iter = rawvideos.iterator(); iter.hasNext(); ) {
         		Node rawvideo = iter.next();
         	
         		String orig = rawvideo.selectSingleNode("properties/original") == null ? "" : rawvideo.selectSingleNode("properties/original").getText();
@@ -120,75 +127,88 @@ public class CreateRawsMarinAction extends ActionAdapter {
         		    logger.debug("Original found");
         		    originalRaw = rawvideo;
         		}
-        	    }
+        	}
         	   
-        	    if (!mp4Found && originalRaw != null) {
+        	if (!mp4Found && originalRaw != null) {
         		Node mountNode = originalRaw.selectSingleNode("properties/mount");
-        		Node filenameNode = originalRaw.selectSingleNode("properties/filename");
-        
-        		if (mountNode != null && mountNode.getText() != null) {
-        		    mount = mountNode.getText();
-        		    logger.debug("mount = "+mount);
-        		} else {
-        		    logger.debug("no mount found");
-        		}
-        					
-        		if (filenameNode != null && filenameNode.getText() != null) {
-        		    filename = filenameNode.getText();
-        		}
-        	    } else {
-        		logger.debug("MP4 found = "+mp4Found+" or no original found");
-        		return null;
-        	    }
+	        	Node filenameNode = originalRaw.selectSingleNode("properties/filename");
+	        
+	        	if (mountNode != null && mountNode.getText() != null) {
+	        	    mount = mountNode.getText();
+	        	    logger.debug("mount = "+mount);
+	        	} else {
+	        	    logger.debug("no mount found");
+	        	}
+	        					
+	        	if (filenameNode != null && filenameNode.getText() != null) {
+	        	    filename = filenameNode.getText();
+	        	}
+        	} else {
+        	   	logger.debug("MP4 found = "+mp4Found+" or no original found");
+        	   	return null;
+            }
         	    
-        	    String newFilename = "";
+        	String newFilename = "";
         	    
-        	    if (filename.lastIndexOf(".") > 0) {
+        	if (filename.lastIndexOf(".") > 0) {
         		newFilename = filename.substring(0, filename.lastIndexOf("."))+".mp4";
-        	    } else {
+        	} else {
         		newFilename = filename + ".mp4";
-        	    }
+        	}
         	    
-        	    //Does not apply for Communications workspace
-        	    if (mount.equals("marin")) {
+        	//Does not apply for Communications workspace
+        	if (mount.equals("marin")) {
         		//transcoded files should always end up in a delivery folder
-        		if (newFilename.indexOf("/Raw/") > 0) {
-        		    newFilename = newFilename.replace("/Raw/", "/Delivery/");
-        		}
+	        	if (newFilename.indexOf("/Raw/") > 0) {
+	        	    newFilename = newFilename.replace("/Raw/", "/Delivery/");
+	        	}
+	        		
+	        	//transcoded files should always end up in a transcode folder
+	        	if (newFilename.indexOf("/transcode/") == -1) {
+	        	    String pre = newFilename.substring(0, newFilename.lastIndexOf("/"));
+	        	    String post = newFilename.substring(newFilename.lastIndexOf("/")+1);
+	        	    newFilename = pre + "/transcode/" + post;
+	        	}
+        	}
         		
-        		//transcoded files should always end up in a transcode folder
-        		if (newFilename.indexOf("/transcode/") == -1) {
-        		    String pre = newFilename.substring(0, newFilename.lastIndexOf("/"));
-        		    String post = newFilename.substring(newFilename.lastIndexOf("/")+1);
-        		    newFilename = pre + "/transcode/" + post;
-        		}
-        	    }
+        	//get config and number of raws to work on
+        	Map<String, EncodingProfile> profiles = getConfigs(uri);
+        	String[] ids = new String[profiles.size()];
+        	logger.debug("number of profiles = "+profiles.size());
+        	int h = 0; 
         		
-        	    //get config and number of raws to work on
-        	    Map<String, EncodingProfile> profiles = getConfigs(uri);
-        	    String[] ids = new String[profiles.size()];
-        	    logger.debug("number of profiles = "+profiles.size());
-        	    int h = 0; 
-        		
-        	    for(Iterator i = profiles.keySet().iterator();i.hasNext();) {
+        	for(Iterator i = profiles.keySet().iterator();i.hasNext();) {
         		ids[h] = (String) i.next();
         		h++;
-        	    }
-        	    //sorting using natural order!! so 11 < 2
-        	    Arrays.sort(ids);
+        	}
+        	//sorting using natural order!! so 11 < 2
+        	Arrays.sort(ids);
         
-        	    for (int j = 0; j < ids.length; j++) {		
+        	for (int j = 0; j < ids.length; j++) {		
         		String id = ids[j];
-        		logger.debug("found video config "+id);			
-        		String rawUri = uri.substring(0, uri.lastIndexOf("/")) +"/"+ videoName+"_transcode/properties";
+        		logger.debug("found video config "+id);		
+        		logger.debug("name = "+profiles.get(id).getName());
+        		
+        		if (mount.equals("marin")) {
+        			if (!profiles.get(id).getName().equals("Online")) {
+        				continue;
+        			}
+        			
+        			int kbpsPos = newFilename.indexOf("kbps");
+        			String pre = newFilename.substring(0, newFilename.lastIndexOf("_", kbpsPos)+1);
+        			String post = newFilename.substring(newFilename.lastIndexOf("."));
+        			newFilename = pre + profiles.get(id).getName() + post;
+        		}
+        		
+        		String rawUri = uri.substring(0, uri.lastIndexOf("/")) +"/"+ videoName+"_"+profiles.get(id).getName()+"/properties";
         			
         		if (FSXMLRequestHandler.instance().getPropertyValue(rawUri+"/reencode") == null && mount != null) {
         		    //if (!FSXMLRequestHandler.instance().hasProperties(rawUri) && mount != null) {			
         		    createRawProperties(rawUri, mount, profiles.get(id), newFilename);
         		}			
-        	    }
+        	}
 	    } catch (Exception e) {
-		logger.error("",e);
+	    	logger.error("",e);
 	    }
 	    return null;
 	}
