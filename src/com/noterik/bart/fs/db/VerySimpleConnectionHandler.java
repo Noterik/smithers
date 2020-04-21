@@ -77,7 +77,7 @@ public class VerySimpleConnectionHandler extends ConnectionHandler {
 	public Connection getConnection() {
 		// database info
 		String jdbcString="jdbc:mysql://" + config.getDatabaseHost() + "/" + config.getDatabaseName();
-		String jdbcDriver="com.mysql.jdbc.Driver";
+		String jdbcDriver="com.mysql.cj.jdbc.Driver";
 		//String jdbcDriver="org.gjt.mm.mysql.Driver";
 		
 		

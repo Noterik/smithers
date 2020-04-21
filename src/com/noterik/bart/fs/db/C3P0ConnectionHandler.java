@@ -60,7 +60,7 @@ public class C3P0ConnectionHandler extends ConnectionHandler {
 		
 		// database info
 		String jdbcString="jdbc:mysql://" + config.getDatabaseHost() + "/" + config.getDatabaseName();
-		String jdbcDriver="com.mysql.jdbc.Driver";
+		String jdbcDriver="com.mysql.cj.jdbc.Driver";
 		
 		System.out.println("CONNECTING TO DATABASE = "+jdbcString);
 		// pooled database connections

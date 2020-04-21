@@ -159,7 +159,8 @@
 				<exclude name="WEB-INF/lib/commons-lang-2.6.jar"/>
 				<exclude name="WEB-INF/lib/commons-net-2.0.jar"/>
 				<exclude name="WEB-INF/lib/commons-logging-1.0.4.jar"/>
-				<exclude name="WEB-INF/lib/mysql-connector-java-5.1.18.jar"/>	
+				<exclude name="WEB-INF/lib/mysql-connector-java-5.1.18.jar"/>
+				<exclude name="WEB-INF/lib/mysql-connector-java-8.0.18.jar"/>
 				<exclude name="WEB-INF/lib/google-collect-1.0-rc1.jar"/>
 				<exclude name="WEB-INF/lib/c3p0-0.9.1.2.jar"/>
 			</fileset>
