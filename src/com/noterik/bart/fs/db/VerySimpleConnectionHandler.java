@@ -76,11 +76,11 @@ public class VerySimpleConnectionHandler extends ConnectionHandler {
 	@Override
 	public Connection getConnection() {
 		// database info
-		String jdbcString="jdbc:mysql://" + config.getDatabaseHost() + "/" + config.getDatabaseName();
+		String jdbcString="jdbc:mysql://" + config.getDatabaseHost() + "/" + config.getDatabaseName() +"?serverTimezone=UTC";
 		String jdbcDriver="com.mysql.cj.jdbc.Driver";
 		//String jdbcDriver="org.gjt.mm.mysql.Driver";
 		
-		
+		System.out.println("CONNECTING TO DATABASE = "+jdbcString);
 		Connection conn = null;
 		try{
 			Class.forName(jdbcDriver).newInstance();
@@ -96,6 +96,7 @@ public class VerySimpleConnectionHandler extends ConnectionHandler {
 		}
 		
 		try{
+			System.out.println("USER="+config.getDatabaseUser()+" pass="+config.getDatabasePassword());
 			conn = DriverManager.getConnection(jdbcString,config.getDatabaseUser(),config.getDatabasePassword());
 			synchronized (lock) {
 				numConnections++;
