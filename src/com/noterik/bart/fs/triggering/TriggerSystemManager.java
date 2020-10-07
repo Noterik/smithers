@@ -205,7 +205,7 @@ public class TriggerSystemManager {
 	 *
 	 * @return
 	 */
-	private Hashtable<String, FSScript> getAllScripts() {
+	public Hashtable<String, FSScript> getAllScripts() {
 		Hashtable<String, FSScript> scripts = new Hashtable<String, FSScript>();
 
 		String query = "SELECT p_uri FROM properties WHERE p_mimetype='" + SCRIPT_MIMETYPE + "'";

@@ -80,6 +80,7 @@ public class TriggerSystemQueue extends Observable implements Observer, Runnable
 
 	public void run() {
 		logger.debug("Starting Trigger System Queue");
+		stopped = false;
 		
 		TriggerEvent tEvent;
 		while(!stopped) {

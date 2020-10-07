@@ -20,9 +20,14 @@
 */
 package com.noterik.bart.fs.triggering;
 
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Observable;
 
 import org.apache.log4j.Logger;
+
+import com.noterik.bart.fs.script.FSScript;
+import com.noterik.springfield.tools.fs.URIParser;
 
 /**
  * Triggering System
@@ -47,37 +52,45 @@ public class TriggerSystem extends Observable {
 	 * get queue
 	 */
 	private TriggerSystemQueue getQueue;
+	private Thread getQueueThread;
 	
 	/**
 	 * put queue
 	 */
 	private TriggerSystemQueue putQueue;
+	private Thread putQueueThread;
 	
 	/**
 	 * post queue
 	 */
 	private TriggerSystemQueue postQueue;
+	private Thread postQueueThread;
 	
 	/**
 	 * delete queue
 	 */
 	private TriggerSystemQueue deleteQueue;
+	private Thread deleteQueueThread;
 	
 	public TriggerSystem(){
 		super();
 		
 		// create new GET, PUT, POST and DELETE Queue's
 		getQueue = new TriggerSystemQueue("GET",100000);
-		new Thread(getQueue).start();
+		getQueueThread = new Thread(getQueue);
+		getQueueThread.start();
 		
 		putQueue = new TriggerSystemQueue("PUT",100000);
-		new Thread(putQueue).start();
+		putQueueThread = new Thread(putQueue);
+		putQueueThread.start();
 		
 		postQueue = new TriggerSystemQueue("POST",100000);
-		new Thread(postQueue).start();
+		postQueueThread = new Thread(postQueue);
+		postQueueThread.start();
 		
 		deleteQueue = new TriggerSystemQueue("DELETE",100000);
-		new Thread(deleteQueue).start();
+		deleteQueueThread = new Thread(deleteQueue);
+		deleteQueueThread.start();
 		
 		// add to trigger system as observer
 		this.addObserver(getQueue);
@@ -115,6 +128,115 @@ public class TriggerSystem extends Observable {
 	public void eventHappened(String uri, String method, String mimeType, String requestData){
 		// debug info
 		logger.debug("TRIGGER -- uri: " + uri + ", method: " + method);
+		
+		if (method.toUpperCase().contentEquals("GET")) {
+			if (getQueueThread != null && getQueueThread.getState() == Thread.State.TERMINATED) {
+				logger.info("TERMINATED GET QUEUE -> RESTARTING");
+				getQueueThread = new Thread(getQueue);
+				TriggerSystemManager manager = TriggerSystemManager.getInstance();
+				
+				// get all scripts
+				Hashtable<String, FSScript> scripts = manager.getAllScripts();
+
+				// add scripts to the triggering system
+				String scriptUri;
+				FSScript script;
+				for (Iterator<String> iter = scripts.keySet().iterator(); iter.hasNext();) {
+					scriptUri = iter.next();
+					script = scripts.get(scriptUri);
+					
+					if(script.get()) {
+						getGetQueue().deleteObserver(script);
+						getGetQueue().addObserver(script);
+					}
+					logger.info("added script: " + scriptUri);
+				}
+				
+				getQueueThread.start();
+			}
+		} else if (method.toUpperCase().contentEquals("PUT")) {
+			if (putQueueThread != null && putQueueThread.getState() == Thread.State.TERMINATED) {
+				logger.info("TERMINATED PUT QUEUE -> RESTARTING");
+				putQueueThread = new Thread(putQueue);
+				
+				TriggerSystemManager manager = TriggerSystemManager.getInstance();
+				
+				// get all scripts
+				Hashtable<String, FSScript> scripts = manager.getAllScripts();
+
+				// add scripts to the triggering system
+				String scriptUri;
+				FSScript script;
+				for (Iterator<String> iter = scripts.keySet().iterator(); iter.hasNext();) {
+					scriptUri = iter.next();
+					script = scripts.get(scriptUri);
+					
+					if(script.put()) {
+						getPutQueue().deleteObserver(script);
+						getPutQueue().addObserver(script);
+					}
+					logger.info("added script: " + scriptUri);
+				}
+				
+				putQueueThread.start();
+			}
+		} else if (method.toUpperCase().contentEquals("POST")) {
+			logger.info("postQueueThread:");
+			logger.info(postQueueThread);
+			logger.info(postQueueThread.getState());
+			if (postQueueThread != null && postQueueThread.getState() == Thread.State.TERMINATED) {
+				logger.info("TERMINATED POST QUEUE -> RESTARTING");
+				postQueueThread = new Thread(postQueue);
+				
+				TriggerSystemManager manager = TriggerSystemManager.getInstance();
+				
+				// get all scripts
+				Hashtable<String, FSScript> scripts = manager.getAllScripts();
+				logger.info("number of scripts "+scripts.size());
+
+				// add scripts to the triggering system
+				String scriptUri;
+				FSScript script;
+				for (Iterator<String> iter = scripts.keySet().iterator(); iter.hasNext();) {
+					scriptUri = iter.next();
+					script = scripts.get(scriptUri);
+					
+					if(script.post()) {
+						getPostQueue().deleteObserver(script);
+						getPostQueue().addObserver(script);
+					}
+					logger.info("added script: " + scriptUri);
+				}
+				
+				postQueueThread.start();
+			}
+		} else if (method.toUpperCase().contentEquals("DELETE")) {
+			if (deleteQueueThread != null && deleteQueueThread.getState() == Thread.State.TERMINATED) {
+				logger.info("TERMINATED DELETE QUEUE -> RESTARTING");
+				deleteQueueThread = new Thread(deleteQueue);
+				
+				TriggerSystemManager manager = TriggerSystemManager.getInstance();
+				
+				// get all scripts
+				Hashtable<String, FSScript> scripts = manager.getAllScripts();
+
+				// add scripts to the triggering system
+				String scriptUri;
+				FSScript script;
+				for (Iterator<String> iter = scripts.keySet().iterator(); iter.hasNext();) {
+					scriptUri = iter.next();
+					script = scripts.get(scriptUri);
+					
+					if(script.delete()) {
+						getDeleteQueue().deleteObserver(script);
+						getDeleteQueue().addObserver(script);
+					}
+					logger.info("added script: " + scriptUri);
+				}
+				
+				deleteQueueThread.start();
+			}
+		}
 		
 		// create event and notify observers
 		TriggerEvent tEvent = new TriggerEvent(uri, method, mimeType, requestData);
