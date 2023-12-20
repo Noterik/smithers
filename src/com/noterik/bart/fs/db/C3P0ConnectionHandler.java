@@ -60,16 +60,16 @@ public class C3P0ConnectionHandler extends ConnectionHandler {
 		
 		// database info
 		String jdbcString="jdbc:mysql://" + config.getDatabaseHost() + "/" + config.getDatabaseName() + "?serverTimezone=UTC";
-		String jdbcDriver="com.mysql.cj.jdbc.Driver";
+		//String jdbcDriver="com.mysql.cj.jdbc.Driver";
 		
 		System.out.println("CONNECTING TO DATABASE = "+jdbcString);
 		// pooled database connections
 		cpds = new ComboPooledDataSource(); 
-		try {
+		/*try {
 			cpds.setDriverClass(jdbcDriver); 
 		} catch (PropertyVetoException e) {
 			logger.error("Could not set driver class.",e);
-		} 
+		}*/
 		
 		// set database info
 		cpds.setJdbcUrl(jdbcString); 
